@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-4">
+    <div class="w-full max-w-md bg-slate-900/70 backdrop-blur border border-slate-800 rounded-2xl shadow-2xl shadow-black/40 px-8 py-10">
+        {% if app.user %}
+            <div class="mb-4 text-sm text-emerald-300 bg-emerald-900/40 border border-emerald-700 rounded-lg px-4 py-3 flex items-center justify-between">
+                <span>
+                    You are logged in as
+                    <span class="font-semibold text-emerald-100">{{ app.user.userIdentifier }}</span>
+                </span>
+                <a href="{{ path('app_logout') }}"
+                   class="ml-3 text-xs font-medium uppercase tracking-wide text-emerald-200 hover:text-emerald-100">
+                    Logout
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-50">
+                Welcome back
+            </h1>
+            <p class="mt-1 text-sm text-slate-400">
+                Please sign in to continue
+            </p>
+        </div>
+
+        {% if error %}
+            <div class="mb-4 rounded-lg border border-red-500/60 bg-red-900/50 px-4 py-3 text-sm text-red-100">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-6">
+            <div>
+                <label for="inputUsername" class="block text-sm font-medium text-slate-200">
+                    Username
+                </label>
+                <div class="mt-1">
+                    <input
+                        type="text"
+                        id="inputUsername"
+                        name="username"
+                        value="{{ last_username }}"
+                        autocomplete="username"
+                        required
+                        autofocus
+                        class="block w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-slate-100 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 placeholder-slate-500"
+                    >
+                </div>
+            </div>
+
+            <div>
+                <label for="inputPassword" class="block text-sm font-medium text-slate-200">
+                    Password
+                </label>
+                <div class="mt-1">
+                    <input
+                        type="password"
+                        id="inputPassword"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                        class="block w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-slate-100 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 placeholder-slate-500"
+                    >
+                </div>
+            </div>
+
+            <input
+                type="hidden"
+                name="_csrf_token"
+                data-controller="csrf-protection"
+                value="{{ csrf_token('authenticate') }}"
+            >
+
+            <button
+                type="submit"
+                class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/40 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900 transition"
+            >
+                Sign in
+            </button>
+
+            <p class="mt-4 text-center text-xs text-slate-500">
+                Don’t have an account?
+                <a href="{{ path('app_register') }}" class="font-medium text-indigo-400 hover:text-indigo-300">
+                    Register here
+                </a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}

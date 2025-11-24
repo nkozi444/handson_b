@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-4">
+    <div class="w-full max-w-md bg-slate-900/70 backdrop-blur border border-slate-800 rounded-2xl shadow-2xl shadow-black/40 px-8 py-10">
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-50">
+                Create an account
+            </h1>
+            <p class="mt-1 text-sm text-slate-400">
+                Join us in just a few steps
+            </p>
+        </div>
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm, {
+            attr: {
+                class: 'space-y-6'
+            }
+        }) }}
+
+            <div>
+                {{ form_label(registrationForm.username, null, {
+                    label_attr: { class: 'block text-sm font-medium text-slate-200' }
+                }) }}
+                <div class="mt-1">
+                    {{ form_widget(registrationForm.username, {
+                        attr: {
+                            class: 'block w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-slate-100 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 placeholder-slate-500'
+                        }
+                    }) }}
+                    {{ form_errors(registrationForm.username) }}
+                </div>
+            </div>
+
+            <div>
+                {{ form_label(registrationForm.plainPassword, 'Password', {
+                    label_attr: { class: 'block text-sm font-medium text-slate-200' }
+                }) }}
+                <div class="mt-1">
+                    {{ form_widget(registrationForm.plainPassword, {
+                        attr: {
+                            class: 'block w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-slate-100 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 placeholder-slate-500'
+                        }
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="mt-1">
+                    {{ form_widget(registrationForm.agreeTerms, {
+                        attr: {
+                            class: 'rounded border-slate-700 bg-slate-900 text-indigo-500 focus:ring-indigo-500/70'
+                        }
+                    }) }}
+                </div>
+                <div class="ml-3 text-xs text-slate-300">
+                    {{ form_label(registrationForm.agreeTerms, null, {
+                        label_attr: { class: 'font-medium cursor-pointer' }
+                    }) }}
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+            </div>
+
+            <button
+                type="submit"
+                class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/40 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900 transition"
+            >
+                Register
+            </button>
+
+            <p class="mt-4 text-center text-xs text-slate-500">
+                Already have an account?
+                <a href="{{ path('app_login') }}" class="font-medium text-indigo-400 hover:text-indigo-300">
+                    Sign in
+                </a>
+            </p>
+
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}

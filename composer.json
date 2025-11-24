@@ -75,18 +75,19 @@
         "symfony/polyfill-php82": "*"
     },
     "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
+    "auto-scripts": {
+        "cache:clear": "symfony-cmd",
+        "assets:install %PUBLIC_DIR%": "symfony-cmd",
+        "doctrine:database:create": "symfony-cmd"
     },
+    "post-install-cmd": [
+        "@auto-scripts"
+    ],
+    "post-update-cmd": [
+        "@auto-scripts"
+    ]
+}
+,
     "conflict": {
         "symfony/symfony": "*"
     },
@@ -97,6 +98,7 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "*",
         "phpunit/phpunit": "^11.5",
         "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.3.*",
