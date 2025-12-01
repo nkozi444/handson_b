@@ -1,24 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
 
-<div class="example-wrapper">
-   <h1>Dashboard</h1>
+    <div class="example-wrapper">
+        <h1>Dashboard</h1>
 
-{% if is_granted('ROLE_ADMIN') %}
-    <p>Admin: You are logged in as Admin. You have full access.</p>
+        {% if is_granted('ROLE_ADMIN') %}
+            <p>Redirecting to Admin Dashboard…</p>
+            <script>
+                window.location.href = "{{ path('tour_dashboard') }}";
+            </script>
 
-{% elseif is_granted('ROLE_USER') %}
-    <p>User: You are logged in as Regular User. Limited access granted.</p>
+        {% elseif is_granted('ROLE_USER') %}
+            <p>Redirecting to User Dashboard…</p>
+            <script>
+                window.location.href = "{{ path('user_dashboard') }}";
+            </script>
 
-{% else %}
-    <p>You are not logged in.</p>
-{% endif %}
-</div>
+        {% else %}
+            <p>You are not logged in.</p>
+        {% endif %}
+    </div>
 {% endblock %}

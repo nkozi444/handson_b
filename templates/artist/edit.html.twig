@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Artist{% endblock %}
+
+{% block body %}
+<div class="min-h-screen p-8 text-white">
+    <div class="max-w-xl mx-auto">
+        <h1 class="text-4xl font-bold mb-6">New Artist</h1>
+
+        {% include 'artist/_form.html.twig' with { form: form, artist: null } %}
+    </div>
+</div>
+{% endblock %}

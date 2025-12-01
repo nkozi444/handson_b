@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% set current_route = app.request.attributes.get('_route') %}
+
+<div class="fixed inset-0 -z-10" style="
+    background: radial-gradient(circle at top left, #312e81 0, transparent 40%),
+                radial-gradient(circle at bottom right, #4c1d95 0, transparent 45%),
+                linear-gradient(180deg,#050509 0%, #111827 45%, #020617 100%);
+"></div>
+
+<div class="relative z-10 min-h-screen text-white flex flex-col">
+
+    {# TOP NAV #}
+    <header class="px-6 lg:px-10 py-6 border-b border-white/10 bg-neutral-950/60 backdrop-blur-md flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-sm font-semibold shadow-lg shadow-indigo-500/30">
+                AG
+            </div>
+            <div>
+                <div class="text-xs uppercase tracking-[0.2em] text-neutral-400">Art Gallery Admin</div>
+                <div class="text-sm font-semibold text-neutral-100">Tour Management</div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:block text-xs text-neutral-400">
+                Logged in as
+                <span class="font-medium text-neutral-100">
+                    {{ app.user.username|default(app.user.email|default('admin')) }}
+                </span>
+            </div>
+
+            <form action="{{ path('app_logout') }}" method="post" class="inline">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-full bg-transparent border border-neutral-700/80 text-neutral-100 py-2 px-3 text-xs sm:text-sm hover:bg-neutral-900/80 hover:border-neutral-500 transition">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M18 12H9.75m0 0L12 9.75M9.75 12 12 14.25" />
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
+    </header>
+
+    {# MAIN GRID (SIDEBAR + CONTENT) #}
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-6 gap-4 lg:gap-6 px-4 sm:px-6 lg:px-8 py-4">
+
+        {# SIDEBAR #}
+        <aside class="hidden md:flex md:flex-col col-span-2 h-full">
+            {% include 'admin/sidebar.html.twig' %}
+        </aside>
+
+        {# PAGE CONTENT #}
+        <main class="col-span-1 md:col-span-4 h-full flex flex-col overflow-hidden">
+            {% block admin_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+{% endblock %}

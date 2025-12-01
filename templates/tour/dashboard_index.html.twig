@@ -1,0 +1,172 @@
+{% extends 'layout/admin.html.twig' %}
+
+{% block title %}Admin Dashboard — Tours{% endblock %}
+
+{% block admin_content %}
+{% set current_route = app.request.attributes.get('_route') %}
+
+{# PAGE HEADER #}
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Admin Dashboard</h1>
+        <p class="text-sm text-neutral-400 mt-1">Overview & statistics for gallery operations</p>
+    </div>
+
+    <div class="text-right text-xs text-neutral-300">
+        <div>Today: {{ "now"|date('Y-m-d') }}</div>
+        <div class="mt-1 text-neutral-400">Server time: {{ "now"|date('H:i') }}</div>
+    </div>
+</div>
+
+{# 4 STAT CARDS #}
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+
+    <div class="p-5 rounded-2xl bg-neutral-900/70 border border-white/10 shadow-lg shadow-black/40">
+        <div class="text-neutral-400 text-sm">Total Tours</div>
+        <div class="text-4xl font-extrabold mt-2">{{ totalTours }}</div>
+        <div class="text-xs text-neutral-500 mt-1">All-time records</div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-neutral-900/70 border border-white/10 shadow-lg shadow-black/40">
+        <div class="text-neutral-400 text-sm">Upcoming Tours</div>
+        <div class="text-4xl font-extrabold mt-2">{{ upcomingTours }}</div>
+        <div class="text-xs text-neutral-500 mt-1">Scheduled from today</div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-neutral-900/70 border border-white/10 shadow-lg shadow-black/40">
+        <div class="text-neutral-400 text-sm">Pending Approvals</div>
+        <div class="text-4xl font-extrabold mt-2 text-amber-400">{{ pendingTours }}</div>
+        <div class="text-xs text-neutral-500 mt-1">Awaiting confirmation</div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-neutral-900/70 border border-white/10 shadow-lg shadow-black/40">
+        <div class="text-neutral-400 text-sm">Completed Tours</div>
+        <div class="text-4xl font-extrabold mt-2 text-emerald-400">{{ completedTours }}</div>
+        <div class="text-xs text-neutral-500 mt-1">Successfully finished</div>
+    </div>
+
+</section>
+
+{# QUICK ACTIONS (ENHANCED + MATCHES RECENT TOUR WIDTH) #}
+<section class="rounded-2xl bg-neutral-950/70 border border-white/10 shadow-xl shadow-black/50 p-5 mb-10">
+
+    <h2 class="text-sm font-semibold text-neutral-200 mb-3">Quick Actions</h2>
+
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ path('app_tour_new') }}"
+           class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-xs font-semibold shadow">
+            + New Tour
+        </a>
+
+        <a href="{{ path('app_exhibition_index') }}"
+           class="px-4 py-2 rounded-xl bg-neutral-800 border border-neutral-700 hover:bg-neutral-700/80 text-xs font-semibold">
+            Manage Exhibitions
+        </a>
+
+        <a href="{{ path('app_tour_index') }}"
+           class="px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-700 hover:bg-neutral-800 text-xs font-semibold">
+            View all tours
+        </a>
+    </div>
+</section>
+
+{# RECENT TOURS TABLE #}
+<section class="rounded-2xl bg-neutral-950/70 border border-white/10 shadow-xl shadow-black/60 overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 border-b border-neutral-800/80">
+        <div>
+            <h2 class="text-lg font-semibold text-neutral-100">Recent Tours</h2>
+            <p class="text-xs text-neutral-400">Last {{ recentTours|length }} records</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <label class="text-xs text-neutral-400" for="statusFilter">Filter status:</label>
+            <select id="statusFilter"
+                    class="rounded-lg bg-neutral-900 border border-neutral-700 text-xs px-3 py-1.5 text-neutral-100">
+                <option value="">All</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm divide-y divide-neutral-800">
+            <thead class="bg-neutral-900/60 text-xs uppercase text-neutral-400">
+            <tr>
+                <th class="px-4 py-3 text-left">Name</th>
+                <th class="px-4 py-3 text-left">Email</th>
+                <th class="px-4 py-3 text-left">Date</th>
+                <th class="px-4 py-3 text-center">Status</th>
+                <th class="px-4 py-3 text-center">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody id="recentToursBody" class="divide-y divide-neutral-800">
+            {% for tour in recentTours %}
+                {% set normalized = tour.status ? tour.status|lower : '' %}
+                {% set statusClass =
+                    normalized == 'confirmed' ? 'confirmed' :
+                    (normalized == 'pending' ? 'pending' : 'other')
+                %}
+
+                <tr class="hover:bg-neutral-800/40 transition recent-row" data-status="{{ statusClass }}">
+                    <td class="px-4 py-3 font-medium text-white">{{ tour.name }}</td>
+                    <td class="px-4 py-3 text-neutral-300">{{ tour.email }}</td>
+                    <td class="px-4 py-3 text-neutral-300">
+                        {{ tour.date ? tour.date|date('Y-m-d H:i') : '—' }}
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+                        {% if normalized == 'confirmed' %}
+                            <span class="px-2 py-1 rounded-full bg-emerald-700/30 text-emerald-200 text-xs font-semibold">
+                                Confirmed
+                            </span>
+                        {% elseif normalized == 'pending' %}
+                            <span class="px-2 py-1 rounded-full bg-amber-600/25 text-amber-300 text-xs font-semibold">
+                                Pending
+                            </span>
+                        {% else %}
+                            <span class="px-2 py-1 rounded-full bg-neutral-700 text-neutral-200 text-xs font-semibold">
+                                {{ tour.status ?: '—' }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+                        <a href="{{ path('app_tour_show', { id: tour.id }) }}"
+                           class="text-indigo-400 hover:text-indigo-300 text-xs">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="py-6 text-center text-neutral-500">
+                        No recent tours found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent()|default('') }}
+
+    <script>
+        const filterSelect = document.getElementById('statusFilter');
+        if (filterSelect) {
+            filterSelect.addEventListener('change', () => {
+                const value = filterSelect.value;
+                document.querySelectorAll('.recent-row').forEach(row => {
+                    const rowStatus = row.getAttribute('data-status');
+                    row.style.display = (!value || rowStatus === value) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+{% endblock %}

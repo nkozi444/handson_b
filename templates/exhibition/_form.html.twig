@@ -1,0 +1,33 @@
+<div class="space-y-6">
+
+    {{ form_start(form) }}
+
+    <div>{{ form_label(form.title) }}{{ form_widget(form.title) }}</div>
+    <div>{{ form_label(form.type) }}{{ form_widget(form.type) }}</div>
+    <div>{{ form_label(form.period) }}{{ form_widget(form.period) }}</div>
+    <div>{{ form_label(form.artists) }}{{ form_widget(form.artists) }}</div>
+    <div>{{ form_label(form.description) }}{{ form_widget(form.description) }}</div>
+    <div>{{ form_label(form.startDate) }}{{ form_widget(form.startDate) }}</div>
+    <div>{{ form_label(form.endDate) }}{{ form_widget(form.endDate) }}</div>
+
+    <div>
+        {{ form_label(form.imageFile) }}
+        {{ form_widget(form.imageFile) }}
+
+        {% if exhibition and exhibition.imagePath %}
+            <img src="/images/exhibitions/{{ exhibition.imagePath }}" class="h-24 rounded-lg mt-3 shadow">
+        {% endif %}
+    </div>
+
+    <div class="flex items-center gap-3">
+        {{ form_widget(form.isActive) }}
+        {{ form_label(form.isActive) }}
+    </div>
+
+    <div class="flex gap-4 pt-4">
+        <button class="btn-primary">{{ button_label|default('Save') }}</button>
+        <a href="{{ path('app_exhibition_index') }}" class="btn-secondary">Cancel</a>
+    </div>
+
+    {{ form_end(form) }}
+</div>

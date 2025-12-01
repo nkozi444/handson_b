@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+{% block title %}Book a Tour — ARTEUM{% endblock %}
+
+{% block body %}
+{# full-screen dark background #}
+<div style="position:fixed; inset:0; background: linear-gradient(180deg, #2e2e2e 0%, #222 100%); z-index:0;"></div>
+
+<div class="relative z-10 min-h-screen flex items-start justify-center py-16 px-4 sm:px-6 lg:px-8 text-white">
+  <div class="w-full max-w-3xl">
+
+    {# header / hero #}
+    <div class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Book a tour</h1>
+      <p class="mt-2 text-neutral-300">Pick a date and let us know what you'd like to see — we’ll get back to confirm.</p>
+    </div>
+
+    {# flash messages #}
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="mb-6 rounded-lg px-4 py-3 {{ label == 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    {# card #}
+    <div class="bg-[#232323] border border-neutral-800 rounded-2xl shadow-xl p-6 sm:p-8">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-semibold text-white">Request a tour</h2>
+          <p class="text-sm text-neutral-400">We’ll review and confirm availability shortly.</p>
+        </div>
+        <div class="text-sm text-neutral-400">Estimated time: <span class="font-semibold text-white">2 min</span></div>
+      </div>
+
+      {# form start #}
+      {{ form_start(tourForm, {'attr': {'class': 'space-y-6'}}) }}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            {{ form_label(tourForm.name, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+            {{ form_widget(tourForm.name, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700'}}) }}
+            <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.name) }}</div>
+          </div>
+
+          <div>
+            {{ form_label(tourForm.email, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+            {{ form_widget(tourForm.email, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700'}}) }}
+            <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.email) }}</div>
+          </div>
+        </div>
+
+        {# Exhibition select (renders only if the form includes this field) #}
+        {% if tourForm.exhibition is defined %}
+          <div>
+            {{ form_label(tourForm.exhibition, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+            {{ form_widget(tourForm.exhibition, {
+              'attr': {
+                'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700'
+              }
+            }) }}
+            <div class="text-xs text-neutral-400 mt-2">Choose the exhibition you want to visit (optional).</div>
+            <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.exhibition) }}</div>
+          </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            {{ form_label(tourForm.phoneNumber, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+            {{ form_widget(tourForm.phoneNumber, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700'}}) }}
+            <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.phoneNumber) }}</div>
+          </div>
+
+          <div>
+            {{ form_label(tourForm.numberOfGuests, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+            {{ form_widget(tourForm.numberOfGuests, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700', 'min':1}}) }}
+            <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.numberOfGuests) }}</div>
+          </div>
+        </div>
+
+        <div>
+          {{ form_label(tourForm.date, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+          {{ form_widget(tourForm.date, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700'}}) }}
+          <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.date) }}</div>
+        </div>
+
+        <div>
+          {{ form_label(tourForm.notes, null, {label_attr: {'class':'text-sm font-medium text-white'}}) }}
+          {{ form_widget(tourForm.notes, {'attr': {'class': 'mt-1 block w-full rounded-md bg-neutral-800 text-neutral-100 px-3 py-2 placeholder:text-neutral-400 focus:ring-2 focus:ring-indigo-500 border border-neutral-700', 'rows':4}}) }}
+          <div class="text-red-400 text-xs mt-1">{{ form_errors(tourForm.notes) }}</div>
+        </div>
+
+        <div class="pt-2">
+          {{ form_widget(tourForm.save, {'attr': {'class': 'w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3 px-4 rounded-lg shadow-lg'}}) }}
+        </div>
+
+      {{ form_end(tourForm) }}
+      {# end form #}
+
+      <p class="mt-4 text-sm text-neutral-400">By booking you agree to our <a class="text-indigo-400 hover:text-indigo-300" href="/privacy">privacy policy</a>.</p>
+    </div>
+
+    {# small helpful tips #}
+    <div class="mt-6 text-sm text-neutral-400">
+      <ul class="list-disc list-inside space-y-1">
+        <li>Prefer a different time? Add it to <strong>Concerns / Questions</strong>.</li>
+        <li>Need to cancel? We'll email you a confirmation with cancellation details.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'layout/admin.html.twig' %}
+
+{% block title %}New Tour — Admin{% endblock %}
+
+{% block admin_content %}
+
+<div class="min-h-full text-white">
+    <div class="mb-6">
+        <h1 class="text-3xl font-extrabold">Create New Tour</h1>
+        <p class="text-sm text-neutral-400 mt-1">
+            Fill out the form below to schedule a new guided tour.
+        </p>
+    </div>
+
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 rounded-lg px-4 py-3 text-sm
+                        {{ label == 'success' ? 'bg-emerald-600/80 text-white' : 'bg-red-600/80 text-white' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="rounded-2xl shadow-2xl bg-[#232323] border border-neutral-800 p-6 md:p-8">
+        {{ include('tour/_form.html.twig') }}
+    </div>
+
+    <div class="mt-6 flex justify-between items-center">
+        <a href="{{ path('app_tour_index') }}"
+           class="text-sm text-neutral-300 border border-neutral-600 px-4 py-2 rounded-lg hover:bg-neutral-800">
+            ← Back to list
+        </a>
+    </div>
+</div>
+
+{% endblock %}

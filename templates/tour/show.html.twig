@@ -1,0 +1,102 @@
+{% extends 'layout/admin.html.twig' %}
+
+{% block title %}Tour #{{ tour.id }} — Admin{% endblock %}
+
+{% block admin_content %}
+<div class="min-h-full p-2 text-white">
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-extrabold">Tour request #{{ tour.id }}</h1>
+            <p class="text-sm text-neutral-400 mt-1">Detailed information for this tour booking.</p>
+        </div>
+
+        <div class="space-x-2 flex items-center">
+            <a href="{{ path('app_tour_edit', {'id': tour.id}) }}"
+               class="px-3 py-2 rounded-lg bg-amber-400 text-black font-semibold text-sm hover:bg-amber-300">
+                Edit
+            </a>
+            <a href="{{ path('app_tour_index') }}"
+               class="px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm hover:bg-neutral-700">
+                Back to list
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-[#232323] border border-neutral-800 rounded-2xl p-6 shadow-xl">
+        <dl class="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-2">
+            <div>
+                <dt class="text-sm text-neutral-400">Name</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.name }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Email</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.email }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Phone</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.phoneNumber ?: '—' }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Guests</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.numberOfGuests }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Date</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.date ? tour.date|date('Y-m-d H:i') : 'N/A' }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Status</dt>
+                <dd class="mt-1 font-medium text-white">{{ tour.status }}</dd>
+            </div>
+
+            <div class="sm:col-span-2">
+                <dt class="text-sm text-neutral-400">Exhibition</dt>
+                <dd class="mt-1">
+                    {% if tour.exhibition %}
+                        <div class="rounded-lg bg-neutral-900 p-4 border border-neutral-800">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">{{ tour.exhibition.title }}</h3>
+                                    <div class="text-sm text-neutral-400">
+                                        {{ tour.exhibition.type ?: '' }}{% if tour.exhibition.period %} — {{ tour.exhibition.period }}{% endif %}
+                                    </div>
+                                    {% if tour.exhibition.artists %}
+                                        <div class="text-sm text-neutral-300 mt-2">
+                                            Artists: {{ tour.exhibition.artists }}
+                                        </div>
+                                    {% endif %}
+                                    {% if tour.exhibition.description %}
+                                        <p class="mt-3 text-neutral-300 text-sm">{{ tour.exhibition.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <span class="text-neutral-400">No exhibition selected.</span>
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div class="sm:col-span-2">
+                <dt class="text-sm text-neutral-400">Notes</dt>
+                <dd class="mt-1 text-neutral-300">{{ tour.notes ?: '—' }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Created</dt>
+                <dd class="mt-1 text-neutral-300">{{ tour.createdAt ? tour.createdAt|date('Y-m-d H:i') : 'N/A' }}</dd>
+            </div>
+
+            <div>
+                <dt class="text-sm text-neutral-400">Updated</dt>
+                <dd class="mt-1 text-neutral-300">{{ tour.updatedAt ? tour.updatedAt|date('Y-m-d H:i') : 'N/A' }}</dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Artist {{ artist.name }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen p-8 text-white max-w-4xl mx-auto">
+
+    <a href="{{ path('app_artist_index') }}" class="text-indigo-400 hover:underline">← Back</a>
+
+    <div class="mt-6 p-6 rounded-xl bg-neutral-900/40 border border-neutral-800 shadow-xl">
+
+        <h1 class="text-4xl font-bold mb-4">{{ artist.name }}</h1>
+
+        {% if artist.imagePath %}
+            <img src="/images/artists/{{ artist.imagePath }}" class="h-40 rounded-lg shadow mb-6">
+        {% endif %}
+
+        <p class="text-neutral-300 whitespace-pre-line">{{ artist.bio ?: 'No bio available.' }}</p>
+
+        <div class="mt-6 text-sm text-neutral-400">
+            <p>Email: {{ artist.email ?: '—' }}</p>
+            <p>Website: {{ artist.website ?: '—' }}</p>
+            <p>Status: {{ artist.isActive ? 'Active' : 'Inactive' }}</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

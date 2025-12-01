@@ -22,14 +22,15 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
-    {
-    }
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator
+    ) {}
 
     public function authenticate(Request $request): Passport
     {
         $username = $request->getPayload()->getString('username');
 
+        // Save last entered username
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
         return new Passport(
@@ -42,17 +43,25 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+  public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
 {
     if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
         return new RedirectResponse($targetPath);
     }
 
-    // Redirect to your dashboard/home page after login/registration
-    return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
-    // or 'app_home' / whatever your real route name is
-}
+    $user = $token->getUser();
+    $roles = $user->getRoles();
 
+    if (in_array('ROLE_ADMIN', $roles)) {
+        return new RedirectResponse($this->urlGenerator->generate('app_tour_index'));
+    }
+
+    if (in_array('ROLE_USER', $roles)) {
+        return new RedirectResponse($this->urlGenerator->generate('app_user_dashboard'));
+    }
+
+    return new RedirectResponse($this->urlGenerator->generate('app_login'));
+}
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);

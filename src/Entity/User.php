@@ -34,6 +34,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();   // Auto set on registration
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,14 +55,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
-
         return $this;
     }
 
     /**
      * A visual identifier that represents this user.
-     *
-     * @see UserInterface
      */
     public function getUserIdentifier(): string
     {
@@ -62,13 +67,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
+     * Get user roles
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_USER'; // Always guarantee ROLE_USER
 
         return array_unique($roles);
     }
@@ -79,12 +83,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
     /**
-     * @see PasswordAuthenticatedUserInterface
+     * Get hashed password
      */
     public function getPassword(): ?string
     {
@@ -94,24 +97,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
     /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     * createdAt getter
+     */
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * createdAt setter
+     */
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * Prevent password being serialized
      */
     public function __serialize(): array
     {
         $data = (array) $this;
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-
         return $data;
     }
 
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // No temporary sensitive data stored.
     }
 }

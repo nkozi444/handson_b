@@ -1,0 +1,213 @@
+{% extends 'layout/admin.html.twig' %}
+
+{% block title %}Tour Index — Admin{% endblock %}
+
+{% block admin_content %}
+{% set current_route = app.request.attributes.get('_route') %}
+
+{# PAGE TITLE #}
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+            Tour Index
+        </h1>
+
+        <p class="mt-2 text-sm text-neutral-400 max-w-xl">
+            Curated scheduled tours for the gallery. Use actions to view or edit.
+
+            {% if q is defined and q %}
+                <span class="ml-1 text-neutral-300">
+                    Search: “<span class="font-semibold">{{ q }}</span>”
+                </span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+        {# SEARCH BAR #}
+        <form method="get" action="{{ path('app_tour_index') }}" class="relative">
+            <input
+                type="search"
+                name="q"
+                value="{{ q|default('') }}"
+                placeholder="Search tours..."
+                aria-label="Search tours"
+                class="w-56 sm:w-72 rounded-xl bg-neutral-900/70 text-neutral-100 placeholder:text-neutral-500
+                       px-4 py-2.5 text-sm outline-none border border-neutral-700/70
+                       focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition" />
+
+            <button type="submit"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-neutral-400 hover:text-neutral-200">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35M17.65 11a6.65 6.65 0 11-13.3 0 6.65 6.65 0 0113.3 0z" />
+                </svg>
+            </button>
+        </form>
+
+        {% if q is defined and q %}
+            <a href="{{ path('app_tour_index') }}"
+               class="inline-flex items-center gap-2 bg-transparent border border-neutral-700/80
+                      text-neutral-100 py-2 px-3 rounded-xl text-sm hover:bg-neutral-900/80 transition">
+                Clear
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+{# WRAPPER FOR TABLE #}
+<div class="flex-1 flex flex-col">
+    <div class="flex-1 overflow-hidden rounded-2xl bg-neutral-950/70
+                border border-white/10 shadow-2xl shadow-black/60">
+
+        {# HEADER BAR ABOVE TABLE #}
+        <div class="p-4 sm:p-5 border-b border-neutral-800/80 flex items-center justify-between
+                    text-xs sm:text-sm text-neutral-400">
+            <div>
+                Showing {{ tours|length }} result{{ tours|length == 1 ? '' : 's' }}
+                {% if q is defined and q %} for “{{ q }}”{% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="hidden sm:inline">Updated:</span>
+                <span class="font-mono text-[11px] sm:text-xs text-neutral-300">
+                    {{ "now"|date('Y-m-d H:i') }}
+                </span>
+            </div>
+        </div>
+
+        {# TABLE #}
+        <div class="flex-1 overflow-auto">
+            <table class="min-w-full table-auto divide-y divide-neutral-800/80 text-sm">
+                <thead class="bg-neutral-900/80 sticky top-0 z-10 backdrop-blur-xl">
+                <tr>
+                    <th class="px-4 py-3 text-center text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Id</th>
+                    <th class="px-4 py-3 text-left   text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Name</th>
+                    <th class="px-4 py-3 text-left   text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Email</th>
+                    <th class="px-4 py-3 text-left   text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Exhibition</th>
+                    <th class="px-4 py-3 text-center text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Guests</th>
+                    <th class="px-4 py-3 text-center text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Date</th>
+                    <th class="px-4 py-3 text-left   text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Notes</th>
+                    <th class="px-4 py-3 text-center text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-center text-[11px] font-semibold text-neutral-300 uppercase tracking-wider">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody class="bg-transparent divide-y divide-neutral-800/60">
+
+                {% if tours is empty %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-16 text-center text-neutral-400 text-sm">
+                            {% if q %} No results for “{{ q }}”. {% else %} No records found. {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+
+                    {% for tour in tours %}
+                        <tr class="odd:bg-neutral-900/40 even:bg-neutral-900/20 hover:bg-neutral-800/80 transition-colors">
+
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-white text-center">
+                                {{ tour.id }}
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-200">
+                                {{ tour.name }}
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-200">
+                                {{ tour.email }}
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-neutral-200">
+                                {% if tour.exhibition %}
+                                    <div class="font-medium text-white">
+                                        {{ tour.exhibition.title }}
+                                    </div>
+                                    <div class="text-xs text-neutral-400">
+                                        {{ tour.exhibition.type ?: '' }}
+                                        {% if tour.exhibition.period %}
+                                            • {{ tour.exhibition.period }}
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <span class="text-neutral-500">—</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-4 py-3 text-center text-sm text-neutral-200">
+                                {{ tour.numberOfGuests }}
+                            </td>
+
+                            <td class="px-4 py-3 text-center text-sm text-neutral-200">
+                                {{ tour.date ? tour.date|date('Y-m-d H:i') : 'N/A' }}
+                            </td>
+
+                            <td class="px-4 py-3 text-sm text-neutral-200 max-w-xs truncate">
+                                {{ tour.notes|default('—') }}
+                            </td>
+
+                            <td class="px-4 py-3 text-center">
+                                {% if tour.status == 'confirmed' %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px]
+                                                 bg-emerald-700/25 text-emerald-200 border border-emerald-500/30">
+                                        Confirmed
+                                    </span>
+
+                                {% elseif tour.status == 'pending' %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px]
+                                                 bg-amber-700/20 text-amber-200 border border-amber-500/30">
+                                        Pending
+                                    </span>
+
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px]
+                                                 bg-neutral-800 text-neutral-200 border border-neutral-700/80">
+                                        {{ tour.status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-4 py-3 text-center text-sm font-medium">
+                                <a href="{{ path('app_tour_show', {'id': tour.id}) }}"
+                                   class="text-indigo-400 hover:text-indigo-300 hover:underline">
+                                    Show
+                                </a>
+                                <span class="mx-1 text-neutral-500">•</span>
+                                <a href="{{ path('app_tour_edit', {'id': tour.id}) }}"
+                                   class="text-amber-400 hover:text-amber-300 hover:underline">
+                                    Edit
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        {# PAGINATION FOOTER (STATIC FOR NOW) #}
+        <div class="px-4 sm:px-5 py-3 border-t border-neutral-800/80 flex items-center justify-between
+                    text-xs sm:text-sm text-neutral-400">
+            <div>
+                Showing {{ tours|length }} result{{ tours|length == 1 ? '' : 's' }}
+                {% if q %} for “{{ q }}”{% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 rounded-lg bg-neutral-900/80 text-neutral-300 border border-neutral-700/80"
+                        disabled>
+                    Prev
+                </button>
+                <button class="px-3 py-1.5 rounded-lg bg-neutral-900/80 text-neutral-300 border border-neutral-700/80"
+                        disabled>
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
