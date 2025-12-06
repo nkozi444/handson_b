@@ -1,78 +1,77 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
 {% block title %}Artists{% endblock %}
 
-{% block body %}
-<div class="min-h-screen p-8 text-white">
-    <div class="max-w-5xl mx-auto">
+{% block admin_content %}
+<div class="h-full overflow-y-auto">
+  <div class="max-w-5xl mx-auto">
 
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-4xl font-extrabold">Artists</h1>
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-4xl font-extrabold">Artists</h1>
 
-            <div class="flex gap-3">
-                {# 🌟 Back to Tour Index #}
-                <a href="{{ path('app_tour_index') }}"
-                   class="px-4 py-2 rounded-lg border border-neutral-600 bg-neutral-800 hover:bg-neutral-700 transition text-sm font-semibold text-neutral-200">
-                    ← Back to Tours
-                </a>
+      <div class="flex gap-3">
+        <a href="{{ path('app_tour_index') }}"
+           class="btn-secondary">
+          ← Back to Tours
+        </a>
 
-                {# ➕ Add Artist #}
-                <a href="{{ path('app_artist_new') }}"
-                   class="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 shadow text-sm font-semibold">
-                    + Add Artist
-                </a>
-            </div>
-        </div>
-
-        <div class="overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900/40 shadow-xl">
-            <table class="min-w-full divide-y divide-neutral-800 text-sm">
-                <thead class="bg-neutral-900/60">
-                    <tr>
-                        <th class="px-6 py-3 text-left">Image</th>
-                        <th class="px-6 py-3 text-left">Name</th>
-                        <th class="px-6 py-3 text-left">Email</th>
-                        <th class="px-6 py-3 text-left">Active</th>
-                        <th class="px-6 py-3 text-left">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-neutral-800">
-                    {% for artist in artists %}
-                        <tr class="hover:bg-neutral-800/40 transition">
-                            <td class="px-6 py-3">
-                                {% if artist.imagePath %}
-                                    <img src="/images/artists/{{ artist.imagePath }}"
-                                         class="h-12 w-12 object-cover rounded-lg">
-                                {% else %}
-                                    <span class="text-neutral-500 text-xs">No image</span>
-                                {% endif %}
-                            </td>
-
-                            <td class="px-6 py-3">{{ artist.name }}</td>
-                            <td class="px-6 py-3">{{ artist.email ?: '—' }}</td>
-                            <td class="px-6 py-3">
-                                {{ artist.isActive ? '✔ Active' : '✖ Disabled' }}
-                            </td>
-
-                            <td class="px-6 py-3">
-                                <a href="{{ path('app_artist_show', {id: artist.id}) }}" class="text-indigo-400 hover:underline">View</a>
-                                <span class="text-neutral-500 mx-2">•</span>
-                                <a href="{{ path('app_artist_edit', {id: artist.id}) }}" class="text-amber-400 hover:underline">Edit</a>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center py-8 text-neutral-400">
-                                No artists found.
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-
-            </table>
-        </div>
-
+        <a href="{{ path('app_artist_new') }}"
+           class="btn-primary">
+          + Add Artist
+        </a>
+      </div>
     </div>
+
+    <div class="overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900/40 shadow-xl">
+      <table class="min-w-full divide-y divide-neutral-800 text-sm">
+        <thead class="bg-neutral-900/60">
+          <tr>
+            <th class="px-6 py-3 text-left">Image</th>
+            <th class="px-6 py-3 text-left">Name</th>
+            <th class="px-6 py-3 text-left">Email</th>
+            <th class="px-6 py-3 text-left">Active</th>
+            <th class="px-6 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-neutral-800">
+          {% for artist in artists %}
+            <tr class="hover:bg-neutral-800/40 transition">
+              <td class="px-6 py-3">
+                {% if artist.imagePath %}
+                  <img src="/images/artists/{{ artist.imagePath }}"
+                       class="h-12 w-12 object-cover rounded-lg">
+                {% else %}
+                  <span class="text-neutral-500 text-xs">No image</span>
+                {% endif %}
+              </td>
+
+              <td class="px-6 py-3">{{ artist.name }}</td>
+              <td class="px-6 py-3">{{ artist.email ?: '—' }}</td>
+              <td class="px-6 py-3">
+                {{ artist.isActive ? '✔ Active' : '✖ Disabled' }}
+              </td>
+
+              <td class="px-6 py-3">
+                <a href="{{ path('app_artist_show', {id: artist.id}) }}"
+                   class="text-indigo-400 hover:underline">View</a>
+                <span class="text-neutral-500 mx-2">•</span>
+                <a href="{{ path('app_artist_edit', {id: artist.id}) }}"
+                   class="text-amber-400 hover:underline">Edit</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center py-8 text-neutral-400">
+                No artists found.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
 </div>
 {% endblock %}
-    

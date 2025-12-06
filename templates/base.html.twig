@@ -2,73 +2,26 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <title>{% block title %}Welcome!{% endblock %}</title>
-        
+
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
 
-        {# Tailwind CSS via CDN #}
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Inter', 'system-ui', 'sans-serif'],
-                        },
-                    },
-                }
-            }
-        </script>
+        {# ✅ Local compiled Tailwind output (no CDN dependency) #}
+        <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
 
         {# Google Fonts (Bunny Fonts) #}
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
 
-        {# Custom Styles #}
-        {# CRITICAL: 'type="text/tailwindcss"' is required to use @apply with the CDN #}
-        <style type="text/tailwindcss">
-            .input-text {
-                @apply w-full rounded-lg bg-slate-900/70 text-slate-100 px-4 py-2 
-                       border border-slate-700 outline-none focus:border-indigo-500
-                       focus:ring-2 focus:ring-indigo-500/30 transition placeholder:text-slate-500;
-            }
-            .input-textarea {
-                @apply w-full rounded-lg bg-slate-900/70 text-slate-100 px-4 py-2 
-                       border border-slate-700 outline-none focus:border-indigo-500
-                       focus:ring-2 focus:ring-indigo-500/30 transition placeholder:text-slate-500;
-            }
-            .input-file {
-                @apply block w-full text-slate-300 file:mr-4 file:py-2 file:px-4
-                       file:rounded-lg file:border-0 file:text-sm file:font-semibold
-                       file:bg-slate-800 file:text-indigo-400 hover:file:bg-slate-700
-                       transition cursor-pointer;
-            }
-            .checkbox-label {
-                @apply text-slate-300 ml-2 text-sm select-none;
-            }
-            .btn-primary {
-                @apply inline-flex justify-center items-center bg-gradient-to-r from-indigo-600 to-violet-600 
-                       text-white font-medium py-2 px-4 rounded-lg shadow-lg shadow-indigo-500/20
-                       hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/40 
-                       focus:ring-2 focus:ring-indigo-500/50 transition duration-200;
-            }
-            .btn-secondary {
-                @apply inline-flex justify-center items-center border border-slate-600 text-slate-200 
-                       bg-transparent py-2 px-4 rounded-lg hover:bg-slate-800 
-                       focus:ring-2 focus:ring-slate-500/50 transition duration-200;
-            }
-        </style>
+        {# Optional: page-specific stylesheets #}
+        {% block stylesheets %}{% endblock %}
 
-        {% block stylesheets %}
-            {# Page specific styles #}
-        {% endblock %}
-
-       {% block javascripts %}{% endblock %}
-
+        {# Optional: page-specific scripts #}
+        {% block javascripts %}{% endblock %}
     </head>
-    
+
     <body class="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans selection:bg-indigo-500/30">
         {% block body %}{% endblock %}
     </body>

@@ -1,0 +1,64 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block admin_content %}
+<div class="h-full overflow-y-auto">
+  <div class="max-w-3xl mx-auto">
+
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-4xl font-extrabold">{{ title }}</h1>
+        <p class="text-sm text-neutral-400 mt-1">Create or update a configuration value.</p>
+      </div>
+
+      <a href="{{ path('app_settings_index') }}" class="btn-secondary">
+        ← Back
+      </a>
+    </div>
+
+    <div class="rounded-2xl p-6 bg-neutral-900/40 border border-neutral-800 shadow-xl">
+      {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs text-neutral-400 mb-1">{{ form_label(form.groupName) }}</div>
+          {{ form_widget(form.groupName, { attr: { class: 'input-text' } }) }}
+          <div class="text-xs text-rose-300 mt-1">{{ form_errors(form.groupName) }}</div>
+        </div>
+
+        <div>
+          <div class="text-xs text-neutral-400 mb-1">{{ form_label(form.keyName) }}</div>
+          {{ form_widget(form.keyName, { attr: { class: 'input-text' } }) }}
+          <div class="text-xs text-rose-300 mt-1">{{ form_errors(form.keyName) }}</div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <div class="text-xs text-neutral-400 mb-1">{{ form_label(form.value) }}</div>
+        {{ form_widget(form.value, { attr: { class: 'input-textarea', rows: 5 } }) }}
+        <div class="text-xs text-rose-300 mt-1">{{ form_errors(form.value) }}</div>
+      </div>
+
+      <div class="mt-4">
+        <div class="text-xs text-neutral-400 mb-1">{{ form_label(form.description) }}</div>
+        {{ form_widget(form.description, { attr: { class: 'input-textarea', rows: 3 } }) }}
+        <div class="text-xs text-rose-300 mt-1">{{ form_errors(form.description) }}</div>
+      </div>
+
+      <div class="mt-4 flex items-center gap-2">
+        {{ form_widget(form.isActive, { attr: { class: 'h-4 w-4 rounded border-slate-600 bg-slate-900/60 text-indigo-500 focus:ring-indigo-500/40' } }) }}
+        <span class="checkbox-label">Active</span>
+      </div>
+
+      <div class="mt-6 flex gap-3">
+        <button type="submit" class="btn-primary">Save</button>
+        <a href="{{ path('app_settings_index') }}" class="btn-secondary">Cancel</a>
+      </div>
+
+      {{ form_end(form) }}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block admin_content %}
+<div class="h-full overflow-y-auto">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-4xl font-extrabold">Settings</h1>
+        <p class="text-sm text-neutral-400 mt-1">Manage key/value configuration for your admin panel.</p>
+      </div>
+
+      <a href="{{ path('app_settings_new') }}" class="btn-primary">
+        + Add Setting
+      </a>
+    </div>
+
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+      {% for msg in messages %}
+        <div class="mb-4 rounded-xl border border-white/10 bg-neutral-900/50 px-4 py-3 text-sm text-neutral-200">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    <div class="rounded-xl overflow-hidden bg-neutral-900/40 border border-neutral-800 shadow-xl">
+      <table class="min-w-full divide-y divide-neutral-800 text-sm">
+        <thead class="bg-neutral-900/60">
+          <tr>
+            <th class="px-6 py-3 text-left text-neutral-300">Group</th>
+            <th class="px-6 py-3 text-left text-neutral-300">Key</th>
+            <th class="px-6 py-3 text-left text-neutral-300">Value</th>
+            <th class="px-6 py-3 text-left text-neutral-300">Active</th>
+            <th class="px-6 py-3 text-left text-neutral-300">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-neutral-800">
+          {% for s in settings %}
+            <tr class="hover:bg-neutral-800/40 transition">
+              <td class="px-6 py-3 text-neutral-300">{{ s.groupName }}</td>
+
+              <td class="px-6 py-3">
+                <div class="font-mono text-xs text-neutral-200">{{ s.keyName }}</div>
+                {% if s.description %}
+                  <div class="text-xs text-neutral-500 mt-1">{{ s.description }}</div>
+                {% endif %}
+              </td>
+
+              <td class="px-6 py-3 text-neutral-200">
+                <div class="max-w-[520px] truncate">{{ s.value ?? '—' }}</div>
+              </td>
+
+              <td class="px-6 py-3">
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs border
+                {{ s.isActive ? 'border-emerald-500/30 text-emerald-300 bg-emerald-500/10' : 'border-rose-500/30 text-rose-300 bg-rose-500/10' }}">
+                  {{ s.isActive ? 'Active' : 'Disabled' }}
+                </span>
+              </td>
+
+              <td class="px-6 py-3">
+                <a href="{{ path('app_settings_edit', {id: s.id}) }}"
+                   class="text-amber-400 hover:underline">Edit</a>
+
+                <span class="mx-2 text-neutral-600">•</span>
+
+                <form method="post" action="{{ path('app_settings_delete', {id: s.id}) }}"
+                      class="inline" onsubmit="return confirm('Delete this setting?');">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete_setting_' ~ s.id) }}">
+                  <button type="submit" class="text-red-400 hover:underline">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center py-10 text-neutral-400">
+                No settings found.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

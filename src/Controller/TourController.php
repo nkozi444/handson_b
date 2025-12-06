@@ -22,10 +22,8 @@ final class TourController extends AbstractController
     {
         $now = new \DateTimeImmutable('now');
 
-        // Total tours
         $totalTours = $tourRepository->count([]);
 
-        // Upcoming (today or later)
         $upcomingTours = (int) $tourRepository->createQueryBuilder('t')
             ->select('COUNT(t.id)')
             ->andWhere('t.date IS NOT NULL')
@@ -34,7 +32,6 @@ final class TourController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Pending
         $pendingTours = (int) $tourRepository->createQueryBuilder('t')
             ->select('COUNT(t.id)')
             ->andWhere('LOWER(t.status) = :status')
@@ -42,7 +39,6 @@ final class TourController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Completed (status = confirmed)
         $completedTours = (int) $tourRepository->createQueryBuilder('t')
             ->select('COUNT(t.id)')
             ->andWhere('LOWER(t.status) = :status')
@@ -50,7 +46,6 @@ final class TourController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Recent tours table
         $recentTours = $tourRepository->createQueryBuilder('t')
             ->orderBy('t.date', 'DESC')
             ->addOrderBy('t.id', 'DESC')
@@ -59,11 +54,11 @@ final class TourController extends AbstractController
             ->getResult();
 
         return $this->render('tour/dashboard_index.html.twig', [
-            'totalTours'    => $totalTours,
-            'upcomingTours' => $upcomingTours,
-            'pendingTours'  => $pendingTours,
-            'completedTours'=> $completedTours,
-            'recentTours'   => $recentTours,
+            'totalTours'     => $totalTours,
+            'upcomingTours'  => $upcomingTours,
+            'pendingTours'   => $pendingTours,
+            'completedTours' => $completedTours,
+            'recentTours'    => $recentTours,
         ]);
     }
 
@@ -73,7 +68,7 @@ final class TourController extends AbstractController
     #[Route('/', name: 'app_tour_index', methods: ['GET'])]
     public function index(Request $request, TourRepository $tourRepository): Response
     {
-        $q     = trim((string) $request->query->get('q', ''));
+        $q = trim((string) $request->query->get('q', ''));
         $tours = $tourRepository->searchWithExhibition($q);
 
         return $this->render('tour/index.html.twig', [
@@ -93,6 +88,12 @@ final class TourController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // ✅ If user typed a custom exhibition request, clear the dropdown selection to avoid conflicts
+            if (method_exists($tour, 'getRequestedExhibition') && $tour->getRequestedExhibition()) {
+                $tour->setExhibition(null);
+            }
+
             $entityManager->persist($tour);
             $entityManager->flush();
 
@@ -128,6 +129,12 @@ final class TourController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // ✅ Same rule on edit
+            if (method_exists($tour, 'getRequestedExhibition') && $tour->getRequestedExhibition()) {
+                $tour->setExhibition(null);
+            }
+
             $entityManager->flush();
             $this->addFlash('success', 'Tour updated successfully.');
 
@@ -146,7 +153,7 @@ final class TourController extends AbstractController
     #[Route('/{id}', name: 'app_tour_delete', methods: ['POST'])]
     public function delete(Request $request, Tour $tour, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $tour->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $tour->getId(), (string) $request->request->get('_token'))) {
             $entityManager->remove($tour);
             $entityManager->flush();
             $this->addFlash('success', 'Tour deleted.');

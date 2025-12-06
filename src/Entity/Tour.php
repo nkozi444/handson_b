@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Exhibition;
 use App\Repository\TourRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Exhibition;
 
 #[ORM\Entity(repositoryClass: TourRepository::class)]
 #[ORM\Table(name: 'tour')]
@@ -20,13 +20,13 @@ class Tour
     #[ORM\Column]
     private ?int $id = null;
 
-    // Visitor display name (shown in your Twig)
+    // Visitor display name
     #[ORM\Column(length: 120)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 120)]
     private ?string $name = null;
 
-    // Contact email (shown in your Twig)
+    // Contact email
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank]
     #[Assert\Email]
@@ -43,7 +43,7 @@ class Tour
     #[Assert\Positive]
     private ?int $numberOfGuests = 1;
 
-    // Requested visit datetime (shown in your Twig as "date")
+    // Requested visit datetime
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank]
     private ?\DateTimeInterface $date = null;
@@ -54,7 +54,7 @@ class Tour
 
     // Request status
     #[ORM\Column(length: 20, options: ['default' => 'pending'])]
-    #[Assert\Choice(['pending','confirmed','cancelled'])]
+    #[Assert\Choice(['pending', 'confirmed', 'cancelled'])]
     private string $status = 'pending';
 
     // Auditing
@@ -72,6 +72,10 @@ class Tour
     #[ORM\ManyToOne(targetEntity: Exhibition::class)]
     #[ORM\JoinColumn(name: 'exhibition_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?Exhibition $exhibition = null;
+
+    // --- Custom exhibition request (optional) ---
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $requestedExhibition = null;
 
     public function __construct()
     {
@@ -97,7 +101,8 @@ class Tour
 
     public function __toString(): string
     {
-        return sprintf('#%d %s %s',
+        return sprintf(
+            '#%d %s %s',
             $this->id ?? 0,
             $this->name ?? '',
             $this->date?->format('Y-m-d H:i') ?? ''
@@ -144,6 +149,18 @@ class Tour
     public function setExhibition(?Exhibition $exhibition): self
     {
         $this->exhibition = $exhibition;
+        return $this;
+    }
+
+    // --- requested exhibition getter/setter ---
+    public function getRequestedExhibition(): ?string
+    {
+        return $this->requestedExhibition;
+    }
+
+    public function setRequestedExhibition(?string $requestedExhibition): self
+    {
+        $this->requestedExhibition = $requestedExhibition;
         return $this;
     }
 }

@@ -1,18 +1,19 @@
+{# templates/admin/sidebar.html.twig #}
 {% set current_route = app.request.attributes.get('_route') %}
 
 <div class="flex flex-col h-full">
 
   {# SIDEBAR WRAPPER (gradient card) #}
-  <div class="flex-1 overflow-y-auto rounded-2xl p-5 
+  <div class="flex-1 overflow-y-auto rounded-2xl p-5
               bg-gradient-to-b from-neutral-900/70 to-neutral-900/40
-              backdrop-blur-xl border border-white/10 
+              backdrop-blur-xl border border-white/10
               shadow-2xl shadow-black/60">
 
     {# HEADER #}
     <div class="flex items-center gap-3 mb-6">
-      <div class="h-11 w-11 rounded-xl 
-                  bg-gradient-to-tr from-indigo-600 to-violet-600 
-                  flex items-center justify-center text-white text-base font-bold 
+      <div class="h-11 w-11 rounded-xl
+                  bg-gradient-to-tr from-indigo-600 to-violet-600
+                  flex items-center justify-center text-white text-base font-bold
                   shadow-inner shadow-indigo-500/40">
         AG
       </div>
@@ -28,10 +29,10 @@
       {# DASHBOARD #}
       <a href="{{ path('app_tour_dashboard') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
-         {{ current_route starts with('app_tour_dashboard') 
-              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30' 
+         {{ current_route starts with('app_tour_dashboard')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
               : 'text-neutral-300 hover:bg-neutral-800/80' }}">
-        
+
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M3 12h6v8H3zM15 4h6v16h-6zM9 8h6v12H9z"/>
@@ -41,13 +42,12 @@
       </a>
 
       {# EXHIBITIONS #}
-      {% if path('app_exhibition_index', {}, false) is not null %}
       <a href="{{ path('app_exhibition_index') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
-         {{ current_route starts with('app_exhibition') 
-              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30' 
+         {{ current_route starts with('app_exhibition')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
               : 'text-neutral-300 hover:bg-neutral-800/80' }}">
-        
+
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M3 7h18M3 12h18M3 17h18"/>
@@ -55,15 +55,14 @@
 
         <span class="font-medium">Exhibitions</span>
       </a>
-      {% endif %}
 
       {# TOURS #}
       <a href="{{ path('app_tour_index') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
-         {{ current_route starts with('app_tour') 
-              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30' 
+         {{ current_route starts with('app_tour')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
               : 'text-neutral-300 hover:bg-neutral-800/80' }}">
-        
+
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M4 7h16M4 12h10M4 17h7"/>
@@ -72,20 +71,19 @@
         <span class="font-medium">Tours</span>
 
         {% if tours is defined %}
-        <span class="ml-auto text-[11px] bg-neutral-900/80 px-2 py-0.5 rounded-full text-neutral-200 border border-white/10">
-          {{ tours|length }}
-        </span>
+          <span class="ml-auto text-[11px] bg-neutral-900/80 px-2 py-0.5 rounded-full text-neutral-200 border border-white/10">
+            {{ tours|length }}
+          </span>
         {% endif %}
       </a>
 
       {# ARTISTS #}
-      {% if path('app_artist_index', {}, false) is not null %}
       <a href="{{ path('app_artist_index') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
-         {{ current_route starts with('app_artist') 
-              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30' 
+         {{ current_route starts with('app_artist')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
               : 'text-neutral-300 hover:bg-neutral-800/80' }}">
-        
+
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 2l3 7h7l-5.5 4 2 7L12 16 5.5 20l2-7L2 9h7z"/>
@@ -93,16 +91,14 @@
 
         <span class="font-medium">Artists</span>
       </a>
-      {% endif %}
 
       {# SETTINGS #}
-      {% if path('app_settings', {}, false) is not null %}
-      <a href="{{ path('app_settings') }}"
+      <a href="{{ path('app_settings_index') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
-         {{ current_route == 'app_settings' 
-              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30' 
+         {{ current_route starts with('app_settings')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
               : 'text-neutral-300 hover:bg-neutral-800/80' }}">
-        
+
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 4v4M6 20v-6a6 6 0 0112 0v6"/>
@@ -110,21 +106,21 @@
 
         <span class="font-medium">Settings</span>
       </a>
-      {% endif %}
+
     </nav>
 
     {# FOOTER BUTTONS #}
     <div class="mt-6 pt-4 border-t border-neutral-800/80 space-y-2">
       <a href="{{ path('app_tour_new') }}"
-         class="block text-center text-sm font-semibold py-2 px-3 rounded-xl 
-                bg-gradient-to-r from-indigo-600 to-violet-600 
-                hover:from-indigo-500 hover:to-violet-500 
+         class="block text-center text-sm font-semibold py-2 px-3 rounded-xl
+                bg-gradient-to-r from-indigo-600 to-violet-600
+                hover:from-indigo-500 hover:to-violet-500
                 shadow-lg shadow-indigo-500/40">
         + New Tour
       </a>
 
       <a href="{{ path('app_tour_index') }}"
-         class="block text-center text-xs text-neutral-300 px-3 py-2 rounded-xl 
+         class="block text-center text-xs text-neutral-300 px-3 py-2 rounded-xl
                 bg-neutral-900/40 border border-white/10">
         View all tours
       </a>
