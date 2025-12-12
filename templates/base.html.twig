@@ -1,28 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}Welcome!{% endblock %}</title>
 
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
 
-        {# ✅ Local compiled Tailwind output (no CDN dependency) #}
-        <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
+    {# ✅ Local compiled Tailwind output (no CDN dependency) #}
+    <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
 
-        {# Google Fonts (Bunny Fonts) #}
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
+    {# ✅ Force dark form fields + fix browser autofill (global) #}
+    <style>
+      input,
+      textarea,
+      select {
+        background-color: #0f1220 !important;
+        color: #ffffff !important;
+      }
 
-        {# Optional: page-specific stylesheets #}
-        {% block stylesheets %}{% endblock %}
+      /* Chrome / Safari autofill fix */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      textarea:-webkit-autofill,
+      select:-webkit-autofill {
+        -webkit-text-fill-color: #ffffff !important;
+        -webkit-box-shadow: 0 0 0px 1000px #0f1220 inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+      }
 
-        {# Optional: page-specific scripts #}
-        {% block javascripts %}{% endblock %}
-    </head>
+      /* Date & time picker (helps keep it dark) */
+      input[type="date"],
+      input[type="datetime-local"] {
+        color-scheme: dark;
+      }
+    </style>
 
-    <body class="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans selection:bg-indigo-500/30">
-        {% block body %}{% endblock %}
-    </body>
+    {# Google Fonts (Bunny Fonts) #}
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
+
+    {# Optional: page-specific stylesheets #}
+    {% block stylesheets %}{% endblock %}
+
+    {# Optional: page-specific scripts #}
+    {% block javascripts %}{% endblock %}
+  </head>
+
+  <body class="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans selection:bg-indigo-500/30">
+    {% block body %}{% endblock %}
+  </body>
 </html>

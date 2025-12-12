@@ -25,7 +25,6 @@ class UserController extends AbstractController
 
         $user = $this->getUser();
 
-        // ✅ Option A: fetch tours that belong to this user
         $tours = $tourRepository->findBy(
             ['user' => $user],
             ['date' => 'DESC']
@@ -56,13 +55,20 @@ class UserController extends AbstractController
         // ✅ Link tour to logged-in user
         $tour->setUser($user);
 
-        // Optional: store identifier in email column (keep if you rely on it in UI)
+        // ✅ Set email immediately (so entity never starts null)
         $tour->setEmail($user->getUserIdentifier());
 
-        $form = $this->createForm(TourType::class, $tour, ['user' => $user]);
+        // ✅ IMPORTANT: pass user + lock_email to form
+        $form = $this->createForm(TourType::class, $tour, [
+            'user' => $user,
+            'lock_email' => true, // user cannot edit email
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // ✅ enforce again (prevents null forever even if form tries)
+            $tour->setEmail($user->getUserIdentifier());
 
             if (method_exists($tour, 'getRequestedExhibition') && $tour->getRequestedExhibition()) {
                 $tour->setExhibition(null);
@@ -109,21 +115,26 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException('You cannot view this booking.');
         }
 
-        // Create edit form
-        $form = $this->createForm(TourType::class, $tour, ['user' => $this->getUser()]);
+        // ✅ preserve email so it can never become null / never change
+        $originalEmail = $tour->getEmail();
+
+        // ✅ IMPORTANT: pass user + lock_email to form
+        $form = $this->createForm(TourType::class, $tour, [
+            'user' => $this->getUser(),
+            'lock_email' => true, // user cannot edit email
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // If user typed a custom exhibition request, clear dropdown selection
+            // ✅ restore original email (prevents null + prevents tampering)
+            $tour->setEmail($originalEmail);
+
             if (method_exists($tour, 'getRequestedExhibition') && $tour->getRequestedExhibition()) {
                 $tour->setExhibition(null);
             }
 
-            // 🔒 Safety: user cannot change status even if they try to tamper
-            // (TourType has status disabled, but we enforce anyway)
-            // Do nothing to status here; it remains whatever it was.
-
+            // status remains unchanged; user can't modify it
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Booking updated successfully.');

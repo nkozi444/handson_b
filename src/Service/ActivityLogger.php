@@ -15,8 +15,16 @@ class ActivityLogger
         private RequestStack $requestStack,
     ) {}
 
-    public function log(string $action, ?string $targetData = null, $overrideUser = null): void
-    {
+    /**
+     * @param mixed $overrideUser If you want to log as another user (optional).
+     * @param bool  $flush        IMPORTANT: set false when called during Doctrine flush events.
+     */
+    public function log(
+        string $action,
+        ?string $targetData = null,
+        $overrideUser = null,
+        bool $flush = true
+    ): ActivityLog {
         $request = $this->requestStack->getCurrentRequest();
         $user = $overrideUser ?? $this->security->getUser();
 
@@ -26,22 +34,24 @@ class ActivityLogger
         $log->setIpAddress($request?->getClientIp());
 
         if ($user) {
-            // ManyToOne link
             $log->setUser($user);
 
-            // Username display (works even if your entity doesn't have getUsername())
             $identifier = method_exists($user, 'getUserIdentifier')
                 ? $user->getUserIdentifier()
                 : (method_exists($user, 'getUsername') ? $user->getUsername() : null);
 
             $log->setUsername($identifier);
 
-            // Pick best role: ADMIN > STAFF > USER (or just join them)
             $roles = method_exists($user, 'getRoles') ? $user->getRoles() : [];
             $log->setRole(implode(',', $roles));
         }
 
         $this->em->persist($log);
-        $this->em->flush();
+
+        if ($flush) {
+            $this->em->flush();
+        }
+
+        return $log;
     }
 }

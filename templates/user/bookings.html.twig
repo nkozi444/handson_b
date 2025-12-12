@@ -3,122 +3,258 @@
 {% block title %}My Bookings — ARTEUM{% endblock %}
 
 {% block body %}
-<div class="fixed inset-0 bg-gradient-to-b from-[#2d2d2d] via-[#242424] to-[#1f1f1f] -z-10"></div>
-<div class="fixed inset-0 opacity-30 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_55%)] -z-10"></div>
+<div class="fixed inset-0 bg-gradient-to-b from-[#2d2d2d] via-[#242424] to-[#161616] -z-10"></div>
+<div class="fixed inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.22),transparent_60%)] -z-10"></div>
+<div class="fixed inset-0 opacity-20 bg-[radial-gradient(ellipse_at_bottom,rgba(236,72,153,0.18),transparent_55%)] -z-10"></div>
 
-<div class="relative z-10 min-h-screen text-white py-14 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-5xl mx-auto">
+<div class="relative z-10 min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto">
 
-    <header class="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-      <div>
-        <p class="text-xs tracking-widest text-neutral-400 uppercase">Your Account</p>
-        <h1 class="text-4xl font-extrabold tracking-tight mt-1">Your Bookings</h1>
-        <p class="mt-2 text-sm text-neutral-400">
-          All tours you've booked are listed here. Changes update automatically.
-        </p>
+    {# Top bar #}
+    <header class="mb-8">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+        <div>
+          <p class="text-xs tracking-[0.22em] text-neutral-400 uppercase">Your Account</p>
+
+          <div class="mt-2 flex items-center gap-3">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">
+              Your <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-violet-300 to-pink-300">Bookings</span>
+            </h1>
+            <span class="hidden sm:inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-200">
+              Live updates
+              <span class="ml-2 inline-block h-2 w-2 rounded-full bg-emerald-400/90 shadow-[0_0_18px_rgba(52,211,153,0.45)]"></span>
+            </span>
+          </div>
+
+          <p class="mt-3 text-sm text-neutral-300/80 max-w-2xl">
+            Track your tour requests, check statuses, and open details anytime. Updates refresh automatically.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <a href="{{ path('app_user_dashboard') }}"
+             class="group inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-neutral-900/60 border border-neutral-700/70 hover:bg-neutral-800/70 hover:border-neutral-600 text-xs font-semibold transition
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+            <span class="opacity-70 group-hover:opacity-100 transition">←</span> Dashboard
+          </a>
+
+          <a href="{{ path('app_user_book_tour') }}"
+             class="group inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold shadow-lg shadow-black/30
+                    bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 transition
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/30">
+            <span class="text-lg leading-none">+</span> Book a Tour
+          </a>
+        </div>
       </div>
 
-      <div class="flex gap-2">
-        <a href="{{ path('app_user_dashboard') }}"
-           class="px-4 py-2 rounded-xl bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 text-xs font-semibold">
-          ← Dashboard
-        </a>
-        <a href="{{ path('app_user_book_tour') }}"
-           class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-xs font-semibold shadow">
-          + Book a Tour
-        </a>
+      {# Stats + Search (shown if there are bookings; JS will also update counts live) #}
+      <div id="bookings-toolbar" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 {% if bookings is empty %}hidden{% endif %}">
+        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm">
+            <p class="text-xs text-neutral-400">Total</p>
+            <p id="stat-total" class="mt-1 text-2xl font-bold">{{ bookings|length }}</p>
+          </div>
+          <div class="rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-4 shadow-sm">
+            <p class="text-xs text-emerald-200/80">Confirmed</p>
+            <p id="stat-confirmed" class="mt-1 text-2xl font-bold">—</p>
+          </div>
+          <div class="rounded-2xl border border-amber-400/15 bg-amber-500/10 p-4 shadow-sm">
+            <p class="text-xs text-amber-200/80">Pending</p>
+            <p id="stat-pending" class="mt-1 text-2xl font-bold">—</p>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <label class="text-xs text-neutral-300/80">Search</label>
+          <div class="mt-2 flex items-center gap-2 rounded-xl bg-black/20 border border-white/10 px-3 py-2">
+            <span class="text-neutral-400">⌕</span>
+            <input id="booking-search" type="text" placeholder="Name, exhibition, status…"
+                   class="w-full bg-transparent outline-none text-sm placeholder:text-neutral-500
+                          focus:outline-none" />
+            <button id="clear-search"
+                    class="hidden text-xs text-neutral-300 hover:text-white px-2 py-1 rounded-lg hover:bg-white/5 transition">
+              Clear
+            </button>
+          </div>
+          <p class="mt-2 text-[11px] text-neutral-400">Filters instantly — no server request.</p>
+        </div>
       </div>
     </header>
 
     {% if bookings is not empty %}
-    <div class="rounded-2xl bg-[#232323]/80 border border-neutral-800 shadow-xl shadow-black/40 overflow-hidden">
-      <div class="px-6 py-5 border-b border-neutral-800 flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-semibold">Bookings</h2>
-          <p class="text-xs text-neutral-400 mt-1">Your latest requests</p>
+      {# Table (desktop) + Cards (mobile) wrapper #}
+      <section class="rounded-2xl bg-[#232323]/75 border border-neutral-800/80 shadow-2xl shadow-black/40 overflow-hidden backdrop-blur">
+        <div class="px-6 py-5 border-b border-neutral-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-semibold">Bookings</h2>
+            <p class="text-xs text-neutral-400 mt-1">Your latest requests</p>
+          </div>
+
+          <div class="flex items-center gap-3 text-xs text-neutral-400">
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+              Auto-refresh <span class="text-neutral-200 font-semibold">4s</span>
+            </span>
+            <span id="last-updated" class="hidden sm:inline">—</span>
+          </div>
         </div>
-        <div class="text-xs text-neutral-400">
-          Auto-refresh: <span class="text-neutral-200 font-semibold">4s</span>
+
+        {# Desktop table #}
+        <div class="hidden md:block overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="text-neutral-400 text-xs uppercase bg-black/10">
+              <tr>
+                <th class="px-6 py-3 text-left">Name</th>
+                <th class="px-6 py-3 text-left">Date</th>
+                <th class="px-6 py-3 text-left">Guests</th>
+                <th class="px-6 py-3 text-left">Exhibition</th>
+                <th class="px-6 py-3 text-left">Status</th>
+                <th class="px-6 py-3 text-left">Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="bookings-tbody" class="divide-y divide-neutral-800/70">
+              {% for booking in bookings %}
+                <tr data-booking-id="{{ booking.id }}"
+                    data-search="{{ (booking.name ~ ' ' ~ (booking.exhibition ? booking.exhibition.title : booking.requestedExhibition) ~ ' ' ~ booking.status)|lower }}"
+                    class="hover:bg-white/5 transition">
+                  <td class="px-6 py-4 font-medium text-white">
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-xs text-neutral-200">
+                        {{ booking.name ? booking.name|slice(0,1)|upper : '•' }}
+                      </span>
+                      <div>
+                        <div class="font-semibold">{{ booking.name }}</div>
+                        <div class="text-xs text-neutral-400">Booking #{{ booking.id }}</div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="px-6 py-4 text-neutral-200">
+                    {{ booking.date ? booking.date|date('M d, Y') : '—' }}
+                  </td>
+
+                  <td class="px-6 py-4 text-neutral-200">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                      👥 <span class="font-semibold">{{ booking.numberOfGuests }}</span>
+                    </span>
+                  </td>
+
+                  <td class="px-6 py-4 text-neutral-200">
+                    {% if booking.exhibition %}
+                      <span class="line-clamp-1">{{ booking.exhibition.title }}</span>
+                    {% elseif booking.requestedExhibition %}
+                      <span class="line-clamp-1">{{ booking.requestedExhibition }}</span>
+                    {% else %}
+                      <span class="text-neutral-400">— No preference —</span>
+                    {% endif %}
+                  </td>
+
+                  <td class="px-6 py-4">
+                    <span class="px-3 py-1 text-xs rounded-full font-semibold
+                      {% if booking.status == 'confirmed' %}
+                        bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30
+                      {% elseif booking.status == 'pending' %}
+                        bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30
+                      {% else %}
+                        bg-rose-500/15 text-rose-200 ring-1 ring-rose-500/30
+                      {% endif %}
+                    ">
+                      {{ booking.status|capitalize }}
+                    </span>
+                  </td>
+
+                  <td class="px-6 py-4">
+                    <a href="{{ path('app_user_booking_view', { id: booking.id }) }}"
+                       class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2
+                              text-indigo-200 hover:text-white hover:bg-white/10 transition font-semibold
+                              focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/70">
+                      View details <span aria-hidden="true">→</span>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-      </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="text-neutral-400 text-xs uppercase bg-black/10">
-            <tr>
-              <th class="px-6 py-3 text-left">Name</th>
-              <th class="px-6 py-3 text-left">Date</th>
-              <th class="px-6 py-3 text-left">Guests</th>
-              <th class="px-6 py-3 text-left">Exhibition</th>
-              <th class="px-6 py-3 text-left">Status</th>
-              <th class="px-6 py-3 text-left">Action</th>
-            </tr>
-          </thead>
-
-          <tbody id="bookings-tbody">
-            {% for booking in bookings %}
-            <tr data-booking-id="{{ booking.id }}"
-                class="border-t border-neutral-800 hover:bg-neutral-800/40 transition">
-              <td class="px-6 py-4 font-medium text-white">{{ booking.name }}</td>
-              <td class="px-6 py-4 text-neutral-200">{{ booking.date ? booking.date|date('Y-m-d') : '—' }}</td>
-              <td class="px-6 py-4 text-neutral-200">{{ booking.numberOfGuests }}</td>
-
-              <td class="px-6 py-4 text-neutral-200">
-                {% if booking.exhibition %}
-                  {{ booking.exhibition.title }}
-                {% elseif booking.requestedExhibition %}
-                  {{ booking.requestedExhibition }}
-                {% else %}
-                  — No preference —
-                {% endif %}
-              </td>
-
-              <td class="px-6 py-4">
-                <span class="px-3 py-1 text-xs rounded-full
+        {# Mobile cards #}
+        <div id="bookings-cards" class="md:hidden p-4 space-y-3">
+          {% for booking in bookings %}
+            <div data-booking-id="{{ booking.id }}"
+                 data-search="{{ (booking.name ~ ' ' ~ (booking.exhibition ? booking.exhibition.title : booking.requestedExhibition) ~ ' ' ~ booking.status)|lower }}"
+                 class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold">{{ booking.name }}</p>
+                  <p class="text-xs text-neutral-400 mt-1">
+                    {{ booking.date ? booking.date|date('M d, Y') : '—' }} · {{ booking.numberOfGuests }} guests
+                  </p>
+                </div>
+                <span class="px-3 py-1 text-[11px] rounded-full font-semibold
                   {% if booking.status == 'confirmed' %}
                     bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30
                   {% elseif booking.status == 'pending' %}
                     bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30
                   {% else %}
-                    bg-red-500/15 text-red-200 ring-1 ring-red-500/30
+                    bg-rose-500/15 text-rose-200 ring-1 ring-rose-500/30
                   {% endif %}
                 ">
                   {{ booking.status|capitalize }}
                 </span>
-              </td>
+              </div>
 
-              <td class="px-6 py-4">
-                <a href="{{ path('app_user_booking_view', { id: booking.id }) }}"
-                   class="inline-flex items-center gap-2 text-indigo-300 hover:text-indigo-200 font-semibold">
-                  View <span aria-hidden="true">→</span>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              <div class="mt-3 text-sm text-neutral-200">
+                <span class="text-neutral-400">Exhibition:</span>
+                {% if booking.exhibition %}
+                  {{ booking.exhibition.title }}
+                {% elseif booking.requestedExhibition %}
+                  {{ booking.requestedExhibition }}
+                {% else %}
+                  <span class="text-neutral-400">— No preference —</span>
+                {% endif %}
+              </div>
+
+              <a href="{{ path('app_user_booking_view', { id: booking.id }) }}"
+                 class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl
+                        bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+                        px-4 py-2.5 text-sm font-semibold shadow-lg shadow-black/25 transition">
+                View details →
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# Toast #}
+      <div id="toast"
+           class="pointer-events-none fixed bottom-5 left-1/2 -translate-x-1/2 opacity-0 translate-y-2 transition
+                  rounded-full border border-white/10 bg-black/40 backdrop-blur px-4 py-2 text-xs text-neutral-100 shadow-lg">
+        Updated
       </div>
-    </div>
 
     {% else %}
-    <div class="rounded-2xl bg-[#232323]/80 border border-neutral-800 shadow-xl shadow-black/40 p-10 text-center">
-      <p class="text-neutral-200 text-lg font-semibold">No bookings yet</p>
-      <p class="text-neutral-400 mt-2">When you book a tour, it will appear here automatically.</p>
+      <div class="rounded-2xl bg-[#232323]/75 border border-neutral-800 shadow-2xl shadow-black/40 p-10 text-center backdrop-blur">
+        <div class="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
+          📌
+        </div>
+        <p class="mt-4 text-neutral-100 text-lg font-semibold">No bookings yet</p>
+        <p class="text-neutral-400 mt-2">When you book a tour, it will appear here automatically.</p>
 
-      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="{{ path('app_user_book_tour') }}"
-           class="inline-block bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 px-5 rounded-xl shadow transition">
-          Book a tour
-        </a>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="{{ path('app_user_book_tour') }}"
+             class="inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+                    text-white font-semibold py-2.5 px-5 rounded-xl shadow transition">
+            Book a tour
+          </a>
 
-        <a href="{{ path('app_user_dashboard') }}"
-           class="inline-block bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 text-white font-semibold py-2.5 px-5 rounded-xl transition">
-          Back to Dashboard
-        </a>
+          <a href="{{ path('app_user_dashboard') }}"
+             class="inline-flex items-center justify-center bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800
+                    text-white font-semibold py-2.5 px-5 rounded-xl transition">
+            Back to Dashboard
+          </a>
+        </div>
       </div>
-    </div>
     {% endif %}
-
   </div>
 </div>
 {% endblock %}
@@ -129,9 +265,39 @@
   <script>
     (function () {
       const tbody = document.getElementById('bookings-tbody');
-      if (!tbody) return;
+      const cards = document.getElementById('bookings-cards');
+      const toast = document.getElementById('toast');
+      const lastUpdated = document.getElementById('last-updated');
+
+      const statTotal = document.getElementById('stat-total');
+      const statConfirmed = document.getElementById('stat-confirmed');
+      const statPending = document.getElementById('stat-pending');
+
+      const search = document.getElementById('booking-search');
+      const clearBtn = document.getElementById('clear-search');
+
+      // If no bookings, nothing to enhance.
+      if (!tbody && !cards) return;
 
       let lastSignature = '';
+      let toastTimer = null;
+
+      function showToast(message) {
+        if (!toast) return;
+        toast.textContent = message || 'Updated';
+        toast.classList.remove('opacity-0', 'translate-y-2');
+        toast.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-2');
+          toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 1400);
+      }
+
+      function humanTime() {
+        const d = new Date();
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
 
       function statusBadge(status) {
         const s = (status || '').toLowerCase();
@@ -140,10 +306,10 @@
             ? 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30'
             : s === 'pending'
               ? 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30'
-              : 'bg-red-500/15 text-red-200 ring-1 ring-red-500/30';
+              : 'bg-rose-500/15 text-rose-200 ring-1 ring-rose-500/30';
 
         const label = s ? s.charAt(0).toUpperCase() + s.slice(1) : '—';
-        return `<span class="px-3 py-1 text-xs rounded-full ${cls}">${label}</span>`;
+        return `<span class="px-3 py-1 text-xs rounded-full font-semibold ${cls}">${label}</span>`;
       }
 
       function exhibitionText(b) {
@@ -154,20 +320,107 @@
         const viewUrl = "{{ path('app_user_booking_view', { id: 'BOOKING_ID' }) }}".replace('BOOKING_ID', b.id);
         const dateText = (b.date || '');
 
+        const searchText = `${b.name || ''} ${exhibitionText(b)} ${b.status || ''}`.toLowerCase();
+
         return `
-          <tr data-booking-id="${b.id}" class="border-t border-neutral-800 hover:bg-neutral-800/40 transition">
-            <td class="px-6 py-4 font-medium text-white">${b.name || ''}</td>
+          <tr data-booking-id="${b.id}" data-search="${searchText}"
+              class="hover:bg-white/5 transition">
+            <td class="px-6 py-4 font-medium text-white">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-xs text-neutral-200">
+                  ${(b.name || '•').slice(0,1).toUpperCase()}
+                </span>
+                <div>
+                  <div class="font-semibold">${b.name || ''}</div>
+                  <div class="text-xs text-neutral-400">Booking #${b.id}</div>
+                </div>
+              </div>
+            </td>
             <td class="px-6 py-4 text-neutral-200">${dateText || '—'}</td>
-            <td class="px-6 py-4 text-neutral-200">${b.numberOfGuests ?? ''}</td>
+            <td class="px-6 py-4 text-neutral-200">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                👥 <span class="font-semibold">${(b.numberOfGuests ?? '')}</span>
+              </span>
+            </td>
             <td class="px-6 py-4 text-neutral-200">${exhibitionText(b)}</td>
             <td class="px-6 py-4">${statusBadge(b.status)}</td>
             <td class="px-6 py-4">
-              <a href="${viewUrl}" class="inline-flex items-center gap-2 text-indigo-300 hover:text-indigo-200 font-semibold">
-                View <span aria-hidden="true">→</span>
+              <a href="${viewUrl}"
+                 class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2
+                        text-indigo-200 hover:text-white hover:bg-white/10 transition font-semibold">
+                View details <span aria-hidden="true">→</span>
               </a>
             </td>
           </tr>
         `;
+      }
+
+      function cardHtml(b) {
+        const viewUrl = "{{ path('app_user_booking_view', { id: 'BOOKING_ID' }) }}".replace('BOOKING_ID', b.id);
+        const dateText = (b.date || '—');
+        const searchText = `${b.name || ''} ${exhibitionText(b)} ${b.status || ''}`.toLowerCase();
+
+        return `
+          <div data-booking-id="${b.id}" data-search="${searchText}"
+               class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-sm font-semibold">${b.name || ''}</p>
+                <p class="text-xs text-neutral-400 mt-1">${dateText} · ${(b.numberOfGuests ?? '')} guests</p>
+              </div>
+              ${statusBadge(b.status).replace('text-xs','text-[11px]')}
+            </div>
+
+            <div class="mt-3 text-sm text-neutral-200">
+              <span class="text-neutral-400">Exhibition:</span> ${exhibitionText(b)}
+            </div>
+
+            <a href="${viewUrl}"
+               class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl
+                      bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+                      px-4 py-2.5 text-sm font-semibold shadow-lg shadow-black/25 transition">
+              View details →
+            </a>
+          </div>
+        `;
+      }
+
+      function updateStats(bookings) {
+        if (!statTotal || !statConfirmed || !statPending) return;
+        const confirmed = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed').length;
+        const pending = bookings.filter(b => (b.status || '').toLowerCase() === 'pending').length;
+
+        statTotal.textContent = bookings.length;
+        statConfirmed.textContent = confirmed;
+        statPending.textContent = pending;
+      }
+
+      function applyFilter() {
+        if (!search) return;
+        const q = (search.value || '').trim().toLowerCase();
+        if (clearBtn) clearBtn.classList.toggle('hidden', q.length === 0);
+
+        const filterNodes = (root) => {
+          if (!root) return;
+          [...root.querySelectorAll('[data-search]')].forEach(el => {
+            const hay = (el.getAttribute('data-search') || '');
+            el.classList.toggle('hidden', q && !hay.includes(q));
+          });
+        };
+
+        // Works for both desktop rows and mobile cards
+        filterNodes(document);
+      }
+
+      if (search) {
+        search.addEventListener('input', applyFilter);
+      }
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          search.value = '';
+          applyFilter();
+          search.focus();
+        });
       }
 
       async function refreshBookings() {
@@ -184,9 +437,35 @@
           if (sig === lastSignature) return;
           lastSignature = sig;
 
-          tbody.innerHTML = bookings.map(rowHtml).join('');
+          updateStats(bookings);
+
+          if (tbody) tbody.innerHTML = bookings.map(rowHtml).join('');
+          if (cards) cards.innerHTML = bookings.map(cardHtml).join('');
+
+          applyFilter();
+
+          if (lastUpdated) {
+            lastUpdated.textContent = `Updated ${humanTime()}`;
+            lastUpdated.classList.remove('hidden');
+          }
+          showToast('Updated');
         } catch (e) {}
       }
+
+      // Initial stats pass for server-rendered list (if JSON refresh hasn't run yet)
+      try {
+        const initialRows = document.querySelectorAll('[data-booking-id]');
+        if (statConfirmed && statPending) {
+          let c = 0, p = 0;
+          initialRows.forEach(r => {
+            const s = (r.getAttribute('data-search') || '');
+            if (s.includes('confirmed')) c++;
+            if (s.includes('pending')) p++;
+          });
+          statConfirmed.textContent = c;
+          statPending.textContent = p;
+        }
+      } catch (e) {}
 
       refreshBookings();
       setInterval(refreshBookings, 4000);
