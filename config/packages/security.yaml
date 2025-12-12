@@ -38,8 +38,21 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-          #- { path: ^/dashboard, roles: ROLE_ADMIN }
-          - { path: ^/dashboard, roles: ['ROLE_USER', 'ROLE_ADMIN']}
+    #- { path: ^/admin, roles: ROLE_ADMIN }  # Only allow admins to access /admin routes
+    #- { path: ^/user, roles: ROLE_USER }    # Only allow users to access /user routes
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/logout, roles: PUBLIC_ACCESS }
+    - { path: ^/tour, roles: ROLE_ADMIN }
+    - { path: ^/site, roles: PUBLIC_ACCESS }
+    - { path: ^/user, roles: ROLE_USER }
+    - { path: ^/settings, roles: ROLE_ADMIN }
+    - { path: ^/home, roles: PUBLIC_ACCESS }
+    - { path: ^/exhibition, roles: ROLE_ADMIN }
+    - { path: ^/dashboard, roles: ROLE_ADMIN}
+    - { path: ^/artist, roles: ROLE_ADMIN }
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/activity_log, roles: ROLE_ADMIN}
 
 when@test:
     security:

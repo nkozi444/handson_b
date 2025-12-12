@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Exhibition;
+use App\Entity\User;
 use App\Repository\TourRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,6 +20,11 @@ class Tour
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    // ✅ Owner of this booking (Option A)
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    private ?User $user = null;
 
     // Visitor display name
     #[ORM\Column(length: 120)]
@@ -111,34 +117,121 @@ class Tour
 
     // --- getters & setters ---
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getName(): ?string { return $this->name; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
+    // ✅ User relation getter/setter
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
 
-    public function getEmail(): ?string { return $this->email; }
-    public function setEmail(string $email): self { $this->email = $email; return $this; }
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
 
-    public function getPhoneNumber(): ?string { return $this->phoneNumber; }
-    public function setPhoneNumber(?string $phoneNumber): self { $this->phoneNumber = $phoneNumber; return $this; }
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 
-    public function getNumberOfGuests(): ?int { return $this->numberOfGuests; }
-    public function setNumberOfGuests(int $numberOfGuests): self { $this->numberOfGuests = $numberOfGuests; return $this; }
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 
-    public function getDate(): ?\DateTimeInterface { return $this->date; }
-    public function setDate(\DateTimeInterface $date): self { $this->date = $date; return $this; }
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
 
-    public function getNotes(): ?string { return $this->notes; }
-    public function setNotes(?string $notes): self { $this->notes = $notes; return $this; }
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
 
-    public function getStatus(): string { return $this->status; }
-    public function setStatus(string $status): self { $this->status = $status; return $this; }
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
 
-    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self { $this->createdAt = $createdAt; return $this; }
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+    public function getNumberOfGuests(): ?int
+    {
+        return $this->numberOfGuests;
+    }
+
+    public function setNumberOfGuests(int $numberOfGuests): self
+    {
+        $this->numberOfGuests = $numberOfGuests;
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
 
     // --- exhibition getter/setter ---
     public function getExhibition(): ?Exhibition

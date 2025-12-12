@@ -11,10 +11,19 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\ActivityLogger; // Import ActivityLogger service
 
 #[Route('/artist')]
 class ArtistController extends AbstractController
 {
+    private $activityLogger;
+
+    // Inject the ActivityLogger service
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     #[Route('/', name: 'app_artist_index', methods: ['GET'])]
     public function index(ArtistRepository $artistRepository): Response
     {
@@ -49,6 +58,13 @@ class ArtistController extends AbstractController
 
             $em->persist($artist);
             $em->flush();
+
+            // Log the creation of the new artist
+            $this->activityLogger->log(
+                'CREATE',
+                'Artist#' . $artist->getId() . ' (' . $artist->getName() . ') created.',
+                $this->getUser()
+            );
 
             return $this->redirectToRoute('app_artist_index');
         }
@@ -91,6 +107,13 @@ class ArtistController extends AbstractController
 
             $em->flush();
 
+            // Log the update of the artist
+            $this->activityLogger->log(
+                'UPDATE',
+                'Artist#' . $artist->getId() . ' (' . $artist->getName() . ') updated.',
+                $this->getUser()
+            );
+
             return $this->redirectToRoute('app_artist_index');
         }
 
@@ -106,6 +129,13 @@ class ArtistController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->request->get('_token'))) {
             $em->remove($artist);
             $em->flush();
+
+            // Log the deletion of the artist
+            $this->activityLogger->log(
+                'DELETE',
+                'Artist#' . $artist->getId() . ' (' . $artist->getName() . ') deleted.',
+                $this->getUser()
+            );
         }
 
         return $this->redirectToRoute('app_artist_index');

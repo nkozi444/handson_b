@@ -3,8 +3,6 @@
 {% block title %}Your dashboard — ARTEUM{% endblock %}
 
 {% block body %}
-
-{# Background #}
 <div class="fixed inset-0 bg-gradient-to-b from-[#333333] to-[#222222] -z-10"></div>
 
 <div class="relative z-10 min-h-screen text-white py-16 px-4 sm:px-6 lg:px-8">
@@ -20,24 +18,23 @@
       </div>
 
       <div class="flex items-center gap-3">
-
-        <a href="{{ path('app_tour_new') }}"
-           class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 
-                  hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2 px-4 
-                  rounded-lg shadow">
+        {# Book a Tour button for Regular Users, Redirect to User's Booking #}
+        <a href="{{ path('app_user_book_tour') }}"
+           class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200">
           Book a tour
         </a>
 
-        <a href="{{ path('app_tour_index') }}"
-           class="inline-flex items-center gap-2 border border-neutral-700 
-                  text-neutral-100 py-2 px-4 rounded-lg hover:bg-neutral-800">
-          My tours
-        </a>
+        {# Show "My Tours" link only for Admins #}
+        {% if is_granted('ROLE_ADMIN') %}
+          <a href="{{ path('app_tour_index') }}"
+             class="inline-flex items-center gap-2 border border-neutral-700 text-neutral-100 py-2 px-4 rounded-lg hover:bg-neutral-800 transition duration-200">
+            My tours
+          </a>
+        {% endif %}
 
         <form action="{{ path('app_logout') }}" method="post">
           <button type="submit"
-                  class="inline-flex items-center gap-2 border border-neutral-700 
-                         text-neutral-100 py-2 px-3 rounded-lg hover:bg-neutral-800">
+                  class="inline-flex items-center gap-2 border border-neutral-700 text-neutral-100 py-2 px-3 rounded-lg hover:bg-neutral-800 transition duration-200">
             Logout
           </button>
         </form>
@@ -47,8 +44,8 @@
     {# User Info + Stats #}
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 
-      {# User card #}
-      <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-6 shadow">
+      {# User Card #}
+      <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-6 shadow-xl">
         <h2 class="text-sm font-semibold text-neutral-300 mb-3">Your account</h2>
 
         <div class="flex items-start gap-3">
@@ -85,24 +82,24 @@
       {# Stats #}
       <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow">
+        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow-xl">
           <div class="text-sm text-neutral-400">Upcoming Tours</div>
           <div class="mt-4 text-3xl font-bold">{{ upcomingCount }}</div>
           <div class="mt-2 text-xs text-neutral-400">Scheduled in the future</div>
         </div>
 
-        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow">
+        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow-xl">
           <div class="text-sm text-neutral-400">Past Tours</div>
           <div class="mt-4 text-3xl font-bold">{{ pastCount }}</div>
           <div class="mt-2 text-xs text-neutral-400">Completed tours</div>
         </div>
 
-        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow">
+        <div class="rounded-2xl bg-[#232323] border border-neutral-800 p-4 shadow-xl">
           <div class="text-sm text-neutral-400">Quick actions</div>
           <div class="mt-4 flex flex-col gap-2">
-            <a href="{{ path('app_tour_new') }}" 
+            <a href="{{ path('app_user_book_tour') }}" 
                class="text-sm text-indigo-400 hover:text-indigo-300">Create new tour</a>
-            <a href="{{ path('app_tour_index') }}" 
+            <a href="{{ path('app_user_bookings') }}" 
                class="text-sm text-indigo-400 hover:text-indigo-300">View bookings</a>
           </div>
         </div>
@@ -110,8 +107,9 @@
       </div>
     </section>
 
-    {# My Tours List #}
-    <section class="rounded-2xl bg-[#232323] border border-neutral-800 p-6 shadow">
+    {# My Tours List - Show this only for Admins #}
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="rounded-2xl bg-[#232323] border border-neutral-800 p-6 shadow-xl">
       <h3 class="text-lg font-semibold text-neutral-100 mb-4">My Tours</h3>
 
       {% if tours is not empty %}
@@ -152,6 +150,7 @@
         </p>
       {% endif %}
     </section>
+    {% endif %}
 
   </div>
 </div>

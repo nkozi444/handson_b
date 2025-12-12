@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block title %}Explore — ARTEUM{% endblock %}
+
+{% block body %}
+<section id="explore" class="min-h-screen py-24" style="background: linear-gradient(180deg, #2b2b2b 0%, #1f1f1f 100%);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+
+    <div class="text-center space-y-6">
+      <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">Explore ARTEUM</h1>
+      <p class="text-lg text-neutral-300 max-w-xl mx-auto">
+        At ARTEUM, exploring art is a unique journey. Our exhibitions offer new perspectives on contemporary and classical art, inviting you to experience history and innovation in one space.
+      </p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Curated Exhibitions</h3>
+        <p class="text-sm text-neutral-400 mt-2">Discover exhibitions that bridge historical context with contemporary art.</p>
+      </div>
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Guided Tours</h3>
+        <p class="text-sm text-neutral-400 mt-2">Join us for guided tours that bring insight and deeper connection to the art.</p>
+      </div>
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Art Education</h3>
+        <p class="text-sm text-neutral-400 mt-2">Engage in our educational programs designed for all ages and art lovers.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

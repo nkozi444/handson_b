@@ -6,12 +6,42 @@ use App\Entity\Tour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Tour>
+ *
+ * @method Tour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Tour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tour[]    findAll()
+ * @method Tour[]    findBy(array $criteria, array $orderBy = null)
+ */
 class TourRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Tour::class);
     }
+
+    /**
+     * Finds Tours for a specific user email, ensuring the Exhibition relation 
+     * is loaded immediately using a LEFT JOIN (Eager Loading).
+     * * This method is crucial for efficiently displaying user bookings alongside 
+     * their selected exhibition details without triggering N+1 database queries.
+     * * @param string $email The email address of the user (matches Tour.email field).
+     * @return Tour[] Returns an array of Tour objects, ordered by date descending.
+     */
+    public function findByUserEmailWithExhibition(string $email): array
+    {
+        return $this->createQueryBuilder('t')
+            // EAGER LOADING FIX: Fetch the related Exhibition entity in one query.
+            ->leftJoin('t.exhibition', 'e')
+            ->addSelect('e')
+            ->andWhere('t.email = :email')
+            ->setParameter('email', $email)
+            ->orderBy('t.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     /**
      * Search tours with joined exhibition by query string & optional date (YYYY-MM-DD)
@@ -43,8 +73,8 @@ class TourRepository extends ServiceEntityRepository
             $asDate = \DateTimeImmutable::createFromFormat('Y-m-d', $q);
             if ($asDate instanceof \DateTimeImmutable) {
                 $qb->orWhere('t.date BETWEEN :start AND :end')
-                   ->setParameter('start', $asDate->setTime(0, 0))
-                   ->setParameter('end',   $asDate->setTime(23, 59, 59));
+                    ->setParameter('start', $asDate->setTime(0, 0))
+                    ->setParameter('end',   $asDate->setTime(23, 59, 59));
             }
         }
 

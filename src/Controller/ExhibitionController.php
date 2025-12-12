@@ -11,10 +11,19 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\ActivityLogger; // Import ActivityLogger service
 
 #[Route('/exhibition')]
 class ExhibitionController extends AbstractController
 {
+    private $activityLogger;
+
+    // Inject the ActivityLogger service
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     #[Route('/', name: 'app_exhibition_index', methods: ['GET'])]
     public function index(ExhibitionRepository $repo): Response
     {
@@ -49,6 +58,13 @@ class ExhibitionController extends AbstractController
 
             $em->persist($exhibition);
             $em->flush();
+
+            // Log the creation of the new exhibition (using getTitle instead of getName)
+            $this->activityLogger->log(
+                'CREATE',
+                'Exhibition#' . $exhibition->getId() . ' (' . $exhibition->getTitle() . ') created.',
+                $this->getUser()
+            );
 
             return $this->redirectToRoute('app_exhibition_index');
         }
@@ -91,6 +107,13 @@ class ExhibitionController extends AbstractController
 
             $em->flush();
 
+            // Log the update of the exhibition (using getTitle instead of getName)
+            $this->activityLogger->log(
+                'UPDATE',
+                'Exhibition#' . $exhibition->getId() . ' (' . $exhibition->getTitle() . ') updated.',
+                $this->getUser()
+            );
+
             return $this->redirectToRoute('app_exhibition_index');
         }
 
@@ -115,6 +138,13 @@ class ExhibitionController extends AbstractController
 
             $em->remove($exhibition);
             $em->flush();
+
+            // Log the deletion of the exhibition (using getTitle instead of getName)
+            $this->activityLogger->log(
+                'DELETE',
+                'Exhibition#' . $exhibition->getId() . ' (' . $exhibition->getTitle() . ') deleted.',
+                $this->getUser()
+            );
         }
 
         return $this->redirectToRoute('app_exhibition_index');

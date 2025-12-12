@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="space-y-6 max-w-7xl mx-auto px-2 sm:px-4">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">Activity Logs</h1>
+  </div>
+
+  {# Filters #}
+  <form method="get"
+        class="rounded-2xl p-4 bg-neutral-900/40 backdrop-blur-xl border border-white/10 shadow-xl shadow-black/40">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">User</label>
+        <input name="user" value="{{ user }}"
+               placeholder="e.g. admin"
+               class="w-full rounded-xl bg-white border border-white/20 px-3 py-2 text-sm text-black
+                      focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+      </div>
+
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">Action</label>
+        <select name="action"
+                class="w-full rounded-xl bg-white border border-white/20 px-3 py-2 text-sm text-black
+                       focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+          <option value="">All</option>
+          {% for a in ['LOGIN','LOGOUT','CREATE','UPDATE','DELETE'] %}
+            <option value="{{ a }}" {{ action == a ? 'selected' : '' }}>{{ a }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">Date</label>
+        <input type="date" name="date" value="{{ date }}"
+               class="w-full rounded-xl bg-white border border-white/20 px-3 py-2 text-sm text-black
+                      focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+      </div>
+
+      <div class="flex items-end gap-2">
+        <button class="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-2 text-sm font-semibold text-white">
+          Filter
+        </button>
+        <a href="{{ path('admin_activity_logs') }}"
+           class="rounded-xl bg-neutral-900/40 border border-white/10 px-3 py-2 text-sm text-neutral-200">
+          Reset
+        </a>
+      </div>
+
+    </div>
+  </form>
+
+  {# Table #}
+  <div class="rounded-2xl p-4 bg-neutral-900/40 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm table-fixed border-separate border-spacing-0">
+        <thead class="text-neutral-400 border-b border-white/10">
+          <tr>
+            <th class="text-left py-2 pr-3 w-40">Date</th>
+            <th class="text-left py-2 pr-3 w-32">User</th>
+            <th class="text-left py-2 pr-3 w-28">Action</th>
+            <th class="text-left py-2 pr-3">Target</th>
+            <th class="text-left py-2 pr-0 w-32">Details</th>
+          </tr>
+        </thead>
+
+        <tbody class="text-neutral-200">
+        {% for log in logs %}
+          <tr class="border-b border-white/5 align-top">
+
+            <td class="py-2 pr-3 text-neutral-300 whitespace-nowrap">
+              {{ log.createdAt|date('Y-m-d H:i:s') }}
+            </td>
+
+            <td class="py-2 pr-3 truncate">
+              {{ log.username ?? '—' }}
+            </td>
+
+            <td class="py-2 pr-3">
+              <span class="inline-flex rounded-full px-2 py-0.5 text-xs border border-white/10
+                {% if log.action == 'DELETE' %} bg-red-500/10 text-red-200
+                {% elseif log.action == 'UPDATE' %} bg-amber-500/10 text-amber-200
+                {% elseif log.action == 'CREATE' %} bg-emerald-500/10 text-emerald-200
+                {% elseif log.action == 'LOGIN' %} bg-sky-500/10 text-sky-200
+                {% elseif log.action == 'LOGOUT' %} bg-purple-500/10 text-purple-200
+                {% endif %}">
+                {{ log.action }}
+              </span>
+            </td>
+
+            <td class="py-2 pr-3 break-words max-h-10 overflow-hidden">
+              {{ log.targetData ?? '—' }}
+            </td>
+
+            {# FIXED DETAILS (NO OVERLAP) #}
+            <td class="py-2 pr-0">
+              <details class="group">
+                <summary
+                  class="cursor-pointer list-none inline-flex items-center gap-2 rounded-xl
+                         bg-white/5 border border-white/10 px-3 py-1.5 text-xs text-neutral-100
+                         hover:bg-white/10 transition">
+                  View
+                  <span class="group-open:rotate-180 transition">▾</span>
+                </summary>
+
+                <div class="mt-2 rounded-xl border border-white/10 bg-neutral-950/70 p-3 space-y-2">
+
+                  <div class="grid grid-cols-3 gap-2">
+                    <span class="text-[11px] text-neutral-500">Role</span>
+                    <span class="col-span-2 text-xs">{{ log.role ?? '—' }}</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2">
+                    <span class="text-[11px] text-neutral-500">IP</span>
+                    <span class="col-span-2 text-xs font-mono break-all">
+                      {{ log.ipAddress ?? '—' }}
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2">
+                    <span class="text-[11px] text-neutral-500">When</span>
+                    <span class="col-span-2 text-xs">
+                      {{ log.createdAt|date('Y-m-d H:i:s') }}
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2">
+                    <span class="text-[11px] text-neutral-500">Target</span>
+                    <span class="col-span-2 text-xs break-words max-h-28 overflow-auto">
+                      {{ log.targetData ?? '—' }}
+                    </span>
+                  </div>
+
+                </div>
+              </details>
+            </td>
+
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="py-6 text-center text-neutral-400">
+              No logs found.
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

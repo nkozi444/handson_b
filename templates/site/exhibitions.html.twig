@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block title %}Exhibitions — ARTEUM{% endblock %}
+
+{% block body %}
+<section id="exhibitions" class="min-h-screen py-24" style="background: linear-gradient(180deg, #2b2b2b 0%, #1f1f1f 100%);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+
+    <div class="text-center space-y-6">
+      <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">Current Exhibitions</h1>
+      <p class="text-lg text-neutral-300 max-w-xl mx-auto">
+        Explore our current exhibitions showcasing artists from around the world, as well as thought-provoking displays on diverse art forms.
+      </p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Exhibition 1: Title</h3>
+        <p class="text-sm text-neutral-400 mt-2">A brief description of the exhibition, its concept, and artists featured.</p>
+      </div>
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Exhibition 2: Title</h3>
+        <p class="text-sm text-neutral-400 mt-2">A brief description of the exhibition, its concept, and artists featured.</p>
+      </div>
+      <div class="p-4 rounded-lg bg-[#232323] border border-neutral-800">
+        <h3 class="text-sm font-semibold text-white">Exhibition 3: Title</h3>
+        <p class="text-sm text-neutral-400 mt-2">A brief description of the exhibition, its concept, and artists featured.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

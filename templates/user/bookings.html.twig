@@ -1,0 +1,195 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Bookings — ARTEUM{% endblock %}
+
+{% block body %}
+<div class="fixed inset-0 bg-gradient-to-b from-[#2d2d2d] via-[#242424] to-[#1f1f1f] -z-10"></div>
+<div class="fixed inset-0 opacity-30 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_55%)] -z-10"></div>
+
+<div class="relative z-10 min-h-screen text-white py-14 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+
+    <header class="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div>
+        <p class="text-xs tracking-widest text-neutral-400 uppercase">Your Account</p>
+        <h1 class="text-4xl font-extrabold tracking-tight mt-1">Your Bookings</h1>
+        <p class="mt-2 text-sm text-neutral-400">
+          All tours you've booked are listed here. Changes update automatically.
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <a href="{{ path('app_user_dashboard') }}"
+           class="px-4 py-2 rounded-xl bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 text-xs font-semibold">
+          ← Dashboard
+        </a>
+        <a href="{{ path('app_user_book_tour') }}"
+           class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-xs font-semibold shadow">
+          + Book a Tour
+        </a>
+      </div>
+    </header>
+
+    {% if bookings is not empty %}
+    <div class="rounded-2xl bg-[#232323]/80 border border-neutral-800 shadow-xl shadow-black/40 overflow-hidden">
+      <div class="px-6 py-5 border-b border-neutral-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-semibold">Bookings</h2>
+          <p class="text-xs text-neutral-400 mt-1">Your latest requests</p>
+        </div>
+        <div class="text-xs text-neutral-400">
+          Auto-refresh: <span class="text-neutral-200 font-semibold">4s</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="text-neutral-400 text-xs uppercase bg-black/10">
+            <tr>
+              <th class="px-6 py-3 text-left">Name</th>
+              <th class="px-6 py-3 text-left">Date</th>
+              <th class="px-6 py-3 text-left">Guests</th>
+              <th class="px-6 py-3 text-left">Exhibition</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-left">Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="bookings-tbody">
+            {% for booking in bookings %}
+            <tr data-booking-id="{{ booking.id }}"
+                class="border-t border-neutral-800 hover:bg-neutral-800/40 transition">
+              <td class="px-6 py-4 font-medium text-white">{{ booking.name }}</td>
+              <td class="px-6 py-4 text-neutral-200">{{ booking.date ? booking.date|date('Y-m-d') : '—' }}</td>
+              <td class="px-6 py-4 text-neutral-200">{{ booking.numberOfGuests }}</td>
+
+              <td class="px-6 py-4 text-neutral-200">
+                {% if booking.exhibition %}
+                  {{ booking.exhibition.title }}
+                {% elseif booking.requestedExhibition %}
+                  {{ booking.requestedExhibition }}
+                {% else %}
+                  — No preference —
+                {% endif %}
+              </td>
+
+              <td class="px-6 py-4">
+                <span class="px-3 py-1 text-xs rounded-full
+                  {% if booking.status == 'confirmed' %}
+                    bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30
+                  {% elseif booking.status == 'pending' %}
+                    bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30
+                  {% else %}
+                    bg-red-500/15 text-red-200 ring-1 ring-red-500/30
+                  {% endif %}
+                ">
+                  {{ booking.status|capitalize }}
+                </span>
+              </td>
+
+              <td class="px-6 py-4">
+                <a href="{{ path('app_user_booking_view', { id: booking.id }) }}"
+                   class="inline-flex items-center gap-2 text-indigo-300 hover:text-indigo-200 font-semibold">
+                  View <span aria-hidden="true">→</span>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="rounded-2xl bg-[#232323]/80 border border-neutral-800 shadow-xl shadow-black/40 p-10 text-center">
+      <p class="text-neutral-200 text-lg font-semibold">No bookings yet</p>
+      <p class="text-neutral-400 mt-2">When you book a tour, it will appear here automatically.</p>
+
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="{{ path('app_user_book_tour') }}"
+           class="inline-block bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 px-5 rounded-xl shadow transition">
+          Book a tour
+        </a>
+
+        <a href="{{ path('app_user_dashboard') }}"
+           class="inline-block bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 text-white font-semibold py-2.5 px-5 rounded-xl transition">
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  <script>
+    (function () {
+      const tbody = document.getElementById('bookings-tbody');
+      if (!tbody) return;
+
+      let lastSignature = '';
+
+      function statusBadge(status) {
+        const s = (status || '').toLowerCase();
+        const cls =
+          s === 'confirmed'
+            ? 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30'
+            : s === 'pending'
+              ? 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30'
+              : 'bg-red-500/15 text-red-200 ring-1 ring-red-500/30';
+
+        const label = s ? s.charAt(0).toUpperCase() + s.slice(1) : '—';
+        return `<span class="px-3 py-1 text-xs rounded-full ${cls}">${label}</span>`;
+      }
+
+      function exhibitionText(b) {
+        return b.exhibitionTitle || b.requestedExhibition || '— No preference —';
+      }
+
+      function rowHtml(b) {
+        const viewUrl = "{{ path('app_user_booking_view', { id: 'BOOKING_ID' }) }}".replace('BOOKING_ID', b.id);
+        const dateText = (b.date || '');
+
+        return `
+          <tr data-booking-id="${b.id}" class="border-t border-neutral-800 hover:bg-neutral-800/40 transition">
+            <td class="px-6 py-4 font-medium text-white">${b.name || ''}</td>
+            <td class="px-6 py-4 text-neutral-200">${dateText || '—'}</td>
+            <td class="px-6 py-4 text-neutral-200">${b.numberOfGuests ?? ''}</td>
+            <td class="px-6 py-4 text-neutral-200">${exhibitionText(b)}</td>
+            <td class="px-6 py-4">${statusBadge(b.status)}</td>
+            <td class="px-6 py-4">
+              <a href="${viewUrl}" class="inline-flex items-center gap-2 text-indigo-300 hover:text-indigo-200 font-semibold">
+                View <span aria-hidden="true">→</span>
+              </a>
+            </td>
+          </tr>
+        `;
+      }
+
+      async function refreshBookings() {
+        try {
+          const res = await fetch("{{ path('app_user_bookings_json') }}", {
+            headers: { 'Accept': 'application/json' }
+          });
+          if (!res.ok) return;
+
+          const data = await res.json();
+          const bookings = data.bookings || [];
+
+          const sig = bookings.map(b => `${b.id}:${b.updatedAt || ''}`).join('|');
+          if (sig === lastSignature) return;
+          lastSignature = sig;
+
+          tbody.innerHTML = bookings.map(rowHtml).join('');
+        } catch (e) {}
+      }
+
+      refreshBookings();
+      setInterval(refreshBookings, 4000);
+    })();
+  </script>
+{% endblock %}

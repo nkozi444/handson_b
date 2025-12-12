@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book a Tour{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto py-12 px-6 bg-neutral-900/40 backdrop-blur-sm rounded-2xl shadow-2xl border border-neutral-800">
+    <h1 class="text-4xl font-extrabold text-center text-white mb-10 tracking-tight">
+        <span class="text-indigo-400">Secure</span> Your Guided Tour
+    </h1>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-neutral-700 pb-6">
+            <h2 class="md:col-span-2 text-xl font-semibold text-indigo-400 mb-2 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                Contact Details
+            </h2>
+
+            {# Other Fields (Name, Email, Phone, Guests) remain here #}
+            <div>
+                <label for="{{ form.name.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.name) }}</span></label>
+                {{ form_widget(form.name, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.name) }}</div>
+            </div>
+            <div>
+                <label for="{{ form.email.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.email) }}</span></label>
+                {{ form_widget(form.email, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.email) }}</div>
+            </div>
+            <div>
+                <label for="{{ form.phoneNumber.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.phoneNumber) }}</span></label>
+                {{ form_widget(form.phoneNumber, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.phoneNumber) }}</div>
+            </div>
+            <div>
+                <label for="{{ form.numberOfGuests.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.numberOfGuests) }}</span></label>
+                {{ form_widget(form.numberOfGuests, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.numberOfGuests) }}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-neutral-700 pb-6">
+            <h2 class="md:col-span-2 text-xl font-semibold text-indigo-400 mb-2 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 8H8m4 0h4m-4 0v4m-4-4h.01M16 18H8m8 0h.01M3 8a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
+                Booking Information
+            </h2>
+
+            {# Date and Exhibition Fields remain here #}
+            <div>
+                <label for="{{ form.date.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.date) }}</span></label>
+                {{ form_widget(form.date, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.date) }}</div>
+            </div>
+            <div>
+                <label for="{{ form.exhibition.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1"><span class="text-white">{{ form_label(form.exhibition) }}</span></label>
+                {{ form_widget(form.exhibition, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.exhibition) }}</div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <h2 class="text-xl font-semibold text-indigo-400 mb-2 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Special Requests & Internal Status
+            </h2>
+
+            <div>
+                <label for="{{ form.requestedExhibition.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1">
+                    <span class="text-white">{{ form_label(form.requestedExhibition) }}</span>
+                    <span class="ml-2 text-xs text-neutral-500">(e.g., specific time, accessibility needs)</span>
+                </label>
+                {{ form_widget(form.requestedExhibition, {'attr': {'class': 'block w-full h-24 px-4 py-3 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.requestedExhibition) }}</div>
+            </div>
+
+            <div>
+                <label for="{{ form.notes.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1">
+                    <span class="text-white">{{ form_label(form.notes) }}</span>
+                    <span class="ml-2 text-xs text-neutral-500">(Internal use only)</span>
+                </label>
+                {{ form_widget(form.notes, {'attr': {'class': 'block w-full h-24 px-4 py-3 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.notes) }}</div>
+            </div>
+
+            <div>
+                <label for="{{ form.status.vars.id }}" class="block text-sm font-medium text-neutral-300 flex items-center mb-1">
+                    <span class="text-white">{{ form_label(form.status) }}</span>
+                </label>
+                {{ form_widget(form.status, {'attr': {'class': 'block w-full px-4 py-2 rounded-lg bg-neutral-800 text-white placeholder:text-neutral-500 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out'}}) }}
+                <div class="text-sm text-red-400 mt-1">{{ form_errors(form.status) }}</div>
+            </div>
+            
+            {# Render any other fields you want to explicitly place, excluding the ones already rendered #}
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="pt-8"> 
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl shadow-indigo-500/40 hover:shadow-indigo-400/50 transform hover:scale-[1.01] transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.001 12.001 0 001.05 15.615v1.745a.75.75 0 00.9.702l.668-.112a10.003 10.003 0 0019.294 0l.668.112a.75.75 0 00.9-.702v-1.745a12.001 12.001 0 00-2.382-9.626z"></path></svg>
+                Confirm Booking
+            </button>
+        </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

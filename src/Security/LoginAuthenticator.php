@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Service\ActivityLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'app_login';
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private ActivityLogger $activityLogger,   
     ) {}
 
     public function authenticate(Request $request): Passport
@@ -43,25 +45,31 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-  public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-{
-    if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-        return new RedirectResponse($targetPath);
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    {
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        $user = $token->getUser();
+
+        // ✅ Log LOGIN with real authenticated user
+        // (TargetData can be anything meaningful; this matches your sample)
+        $this->activityLogger->log('LOGIN', 'User Login', is_object($user) ? $user : null);
+
+        $roles = is_object($user) && method_exists($user, 'getRoles') ? $user->getRoles() : [];
+
+        if (in_array('ROLE_ADMIN', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_tour_index'));
+        }
+
+        if (in_array('ROLE_USER', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_user_dashboard'));
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
 
-    $user = $token->getUser();
-    $roles = $user->getRoles();
-
-    if (in_array('ROLE_ADMIN', $roles)) {
-        return new RedirectResponse($this->urlGenerator->generate('app_tour_index'));
-    }
-
-    if (in_array('ROLE_USER', $roles)) {
-        return new RedirectResponse($this->urlGenerator->generate('app_user_dashboard'));
-    }
-
-    return new RedirectResponse($this->urlGenerator->generate('app_login'));
-}
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);

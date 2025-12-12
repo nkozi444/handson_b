@@ -51,7 +51,18 @@
 
             <div>
                 <dt class="text-sm text-neutral-400">Status</dt>
-                <dd class="mt-1 font-medium text-white">{{ tour.status }}</dd>
+                <dd class="mt-1 font-medium text-white">
+                    <form method="post" action="{{ path('app_tour_update_status', {'id': tour.id}) }}" class="inline-block">
+                        <select name="status" class="bg-neutral-800 text-white border border-neutral-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                            <option value="pending" {% if tour.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="confirmed" {% if tour.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                            <option value="cancelled" {% if tour.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                        <button type="submit" class="ml-3 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                            Update
+                        </button>
+                    </form>
+                </dd>
             </div>
 
             <div class="sm:col-span-2">

@@ -92,6 +92,21 @@
         <span class="font-medium">Artists</span>
       </a>
 
+      {# ACTIVITY LOGS #}
+      <a href="{{ path('admin_activity_logs') }}"
+         class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors
+         {{ current_route starts with('admin_activity_logs')
+              ? 'bg-indigo-700/80 text-white shadow-md shadow-indigo-500/30'
+              : 'text-neutral-300 hover:bg-neutral-800/80' }}">
+
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M8 7h8M8 11h8M8 15h6M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+        </svg>
+
+        <span class="font-medium">Activity Logs</span>
+      </a>
+
       {# SETTINGS #}
       <a href="{{ path('app_settings_index') }}"
          class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors

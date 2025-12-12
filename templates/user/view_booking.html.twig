@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Booking — ARTEUM{% endblock %}
+
+{% block body %}
+<div class="fixed inset-0 bg-gradient-to-b from-[#2d2d2d] via-[#242424] to-[#1f1f1f] -z-10"></div>
+<div class="fixed inset-0 opacity-30 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_55%)] -z-10"></div>
+
+<div class="relative z-10 min-h-screen text-white py-14 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+
+    {# HEADER #}
+    {% set normalized = booking.status ? booking.status|lower : '' %}
+    {% set statusPill =
+      normalized == 'confirmed'
+        ? 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30'
+        : (normalized == 'pending'
+          ? 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30'
+          : 'bg-red-500/15 text-red-200 ring-1 ring-red-500/30')
+    %}
+
+    <header class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div>
+        <p class="text-xs tracking-widest text-neutral-400 uppercase">Booking</p>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1">
+          #{{ booking.id }}
+        </h1>
+
+        <div class="mt-3">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold {{ statusPill }}">
+            <span class="h-1.5 w-1.5 rounded-full
+              {% if normalized == 'confirmed' %}bg-emerald-400
+              {% elseif normalized == 'pending' %}bg-amber-400
+              {% else %}bg-red-400{% endif %}
+            "></span>
+            {{ booking.status|capitalize }}
+          </span>
+
+          <span class="ml-2 text-xs text-neutral-400">
+            Updated: {{ booking.updatedAt ? booking.updatedAt|date('Y-m-d H:i') : '—' }}
+          </span>
+        </div>
+      </div>
+
+    </header>
+
+    {# DETAILS #}
+    <section class="rounded-2xl bg-[#232323]/80 border border-neutral-800 shadow-xl shadow-black/40 overflow-hidden">
+      <div class="px-6 py-5 border-b border-neutral-800">
+        <h2 class="text-lg font-semibold">Booking Details</h2>
+        <p class="text-xs text-neutral-400 mt-1">Summary of your tour request</p>
+      </div>
+
+      <div class="p-6">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+          <div class="rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Name</dt>
+            <dd class="mt-2 font-semibold text-white">{{ booking.name }}</dd>
+          </div>
+
+          <div class="rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Email</dt>
+            <dd class="mt-2 font-semibold text-white break-all">{{ booking.email }}</dd>
+          </div>
+
+          <div class="rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Date & time</dt>
+            <dd class="mt-2 font-semibold text-white">
+              {{ booking.date ? booking.date|date('Y-m-d H:i') : '—' }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Guests</dt>
+            <dd class="mt-2 font-semibold text-white">{{ booking.numberOfGuests }}</dd>
+          </div>
+
+          <div class="sm:col-span-2 rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Exhibition preference</dt>
+            <dd class="mt-2 font-semibold text-white">
+              {% if booking.exhibition %}
+                {{ booking.exhibition.title }}
+              {% elseif booking.requestedExhibition %}
+                {{ booking.requestedExhibition }}
+              {% else %}
+                — No preference —
+              {% endif %}
+            </dd>
+          </div>
+
+          <div class="sm:col-span-2 rounded-xl bg-black/10 border border-neutral-800 p-4">
+            <dt class="text-xs uppercase tracking-wide text-neutral-400">Notes</dt>
+            <dd class="mt-2 text-neutral-100 whitespace-pre-line">{{ booking.notes ?: '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    {# EDIT FORM (ONLY ONCE) #}
+    <section class="mt-7 rounded-2xl bg-[#232323]/80 border border-neutral-900 shadow-xl shadow-black/40 overflow-hidden">
+      <div class="px-6 py-5 border-b border-neutral-900">
+        <h2 class="text-lg font-semibold text-white">Edit Booking</h2>
+        <p class="text-xs text-neutral-400 mt-1">Only administrators can confirm or cancel bookings.</p>
+      </div>
+
+      <div class="p-6">
+        {{ form_start(form) }}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {{ form_row(form.name, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          {{ form_row(form.phoneNumber, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          {{ form_row(form.numberOfGuests, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          {{ form_row(form.date, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          {{ form_row(form.exhibition, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          {{ form_row(form.requestedExhibition, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+
+          <div class="sm:col-span-2">
+            {{ form_row(form.notes, {'attr': {'class': 'bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600'}}) }}
+          </div>
+
+          {% if form.status is defined %}
+            <div class="hidden">
+              {{ form_row(form.status) }}
+            </div>
+          {% endif %}
+        </div>
+
+        {# render CSRF token once (if present) #}
+        {% if form._token is defined %}
+          {{ form_row(form._token) }}
+        {% endif %}
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button type="submit"
+                  class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 font-semibold shadow text-white">
+            Save Changes
+          </button>
+
+          <a href="{{ path('app_user_bookings') }}"
+             class="px-5 py-2.5 rounded-xl bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 font-semibold text-center text-white">
+            Back to Bookings
+          </a>
+
+          <a href="{{ path('app_user_dashboard') }}"
+             class="px-5 py-2.5 rounded-xl bg-neutral-900/60 border border-neutral-700 hover:bg-neutral-800 font-semibold text-center text-white">
+            Dashboard
+          </a>
+        </div>
+
+        {{ form_end(form, {'render_rest': false}) }}
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
